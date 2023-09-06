@@ -1,7 +1,9 @@
-import { IsEmail, IsNotEmpty, IsString, Length, IsInt, IsNumberString } from "class-validator"
-import { Role } from "src/roles/entities/rol.entity";
+import { IsEmail, IsNotEmpty, IsString, Length, IsNumberString, IsDate } from "class-validator"
+
 
 export class CreateUserDto {
+    
+
     @IsEmail({}, { message: 'Correo electrónico inválido' })
     @IsNotEmpty()
     @Length(1, 40, { message: 'El correo electrónico debe tener entre 1 y 40 caracteres' })
@@ -9,29 +11,35 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsString()
-    @Length(5, 10)
-    password: string
+    @Length(5, 20)
+    password: string;
 
     @IsNotEmpty()
     @IsString()
     @Length(3, 20, { message: 'Los nombres deben tener entre 3 y 20 caracteres' })
-    name: string
+    name: string;
 
     @IsNotEmpty()
     @IsString()
     @Length(3, 20, { message: 'Los apellidos deben tener entre 3 y 20 caracteres' })
-    lastname: string
+    lastname: string;
 
     @IsNotEmpty()
     @IsNumberString()
     @Length(5, 20, { message: 'El número de documento debe tener entre 5 y 20 caracteres' })
-    document: number
+    document: number;
+
+    @IsNotEmpty()    
+    birthday: Date;
 
     @IsNotEmpty()
     @IsNumberString()
     @Length(5, 10, { message: 'El numero de celular debe tener entre 5 y 10 caracteres' })
-    cellphone: number
+    cellphone: number;
 
-     
-    roleId: number; 
+    documentTypeId: number
+    
+    municipalityId: number;
+
+    roleId: number;
 }

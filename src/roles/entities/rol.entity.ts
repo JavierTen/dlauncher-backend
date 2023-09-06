@@ -1,8 +1,8 @@
-import { User } from "src/users/entities/user.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Users } from "src/users/entities/user.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class Role {
+export class Roles {
     @PrimaryGeneratedColumn()
     id: number;
     
@@ -12,11 +12,11 @@ export class Role {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date
 
-    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt: Date; // Columna para almacenar la fecha y hora de actualización automáticamente
 
-    @OneToMany(() => User, user => user.role) // Un rol puede tener varios usuarios
-    users: User[];
+    @OneToMany(() => Users, user => user.role) // Un rol puede tener varios usuarios
+    users: Users[];
 
 }
 

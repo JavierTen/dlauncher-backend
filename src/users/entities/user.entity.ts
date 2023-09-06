@@ -1,9 +1,11 @@
-import { Entity } from 'typeorm'
-import { PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne } from "typeorm";
-import { Role } from '../../roles/entities/rol.entity'
+import { Entity,PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne, JoinColumn, BeforeInsert} from "typeorm";
+import { Roles } from '../../roles/entities/rol.entity'
+import { Municipality } from "src/municipality/entities/municipality.entity";
+import { DocumentType } from "src/document-type/entities/document-type.entity";
+import * as crypto from 'crypto';
 
 @Entity()
-export class User {
+export class Users {
     @PrimaryGeneratedColumn()
     id: number; // Columna de clave primaria generada automáticamente
 
@@ -19,7 +21,7 @@ export class User {
     @Column({ length: 45 })
     lastname: string; // Columna para almacenar el apellido con longitud máxima de 45 caracteres
 
-    @Column({ nullable: true, type: 'datetime' })
+    @Column({ nullable: true, type: 'date' })
     birthday: Date; // Columna para almacenar la fecha de cumpleaños (opcional)
 
     @Column({ type: "bigint", width: 20, unique: true }) // Columna para almacenar un número entero de 15 dígitos
@@ -31,13 +33,41 @@ export class User {
     @Column({ default: false })
     validated: boolean; // Columna para indicar si el usuario está validado
 
+    @Column({ unique: true })
+  token: string; // Columna para almacenar el nombre del equipo, debe ser único
+
+  generateRandomToken(length: number): string {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const randomBytes = crypto.randomBytes(length);
+
+    let token = '';
+    for (let i = 0; i < randomBytes.length; i++) {
+      token += characters[randomBytes[i] % characters.length];
+    } 
+
+    return token;
+  }
+
+  @BeforeInsert()
+  generateToken() {
+    this.token = this.generateRandomToken(6); // Cambia la longitud si es necesario
+  }
+
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date; // Columna para almacenar la fecha y hora de creación, con valor por defecto actual
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // Columna para almacenar la fecha y hora de actualización automáticamente
 
-    @ManyToOne(() => Role, role => role.users)
-    role: Role; // Relación con la entidad Role, muchos usuarios pueden tener un mismo rol
+    @ManyToOne(() => Municipality, municipality => municipality.users, { eager: true })
+    @JoinColumn({ name: 'municipalityId' })
+    municipality: Municipality;
+
+    @ManyToOne(() => DocumentType, documentType => documentType.users, { eager: true })
+    @JoinColumn({ name: 'documentTypeId'}) // Establece un valor predeterminado para el tipo de documento
+    documentType: DocumentType;
+
+    @ManyToOne(() => Roles, role => role.users) 
+    role: Roles; // Relación con la entidad Role, muchos usuarios pueden tener un mismo rol
 }
    
