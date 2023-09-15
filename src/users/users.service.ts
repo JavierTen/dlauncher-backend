@@ -1,12 +1,13 @@
-import { ConflictException, Injectable, HttpException, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ConflictException, Injectable, HttpException, HttpStatus, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import {UsersTeamsEvents} from '../users-team-event/entities/users-team-event.entity'
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt'
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 
 
@@ -95,6 +96,27 @@ export class UsersService {
 
   }
 
+  async findById(idUser: number): Promise<Users | undefined> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: {
+          id: idUser
+        }
+
+      })
+
+      if(user){
+        user.password = null;
+        user.token = null;
+      }
+      return user
+
+    } catch (error) {
+      return error
+    }
+
+  }
+
   async findUserEvents(idUser) {    
     try {
       const usuario = await this.uteRepository.find({
@@ -122,62 +144,66 @@ export class UsersService {
     
   }
 
-  async validateUser(userId: number, token: string, validated: boolean) {
-    // Buscar el usuario por ID
-    const user = await this.findOne(userId);
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<Users> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id
+      }
+    });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
 
-    // Verificar si el token enviado coincide con el token almacenado en la base de datos
-    if (token !== user.token) {
-      throw new BadRequestException('Token no válido');
-    }
+    // Actualizamos los campos proporcionados en updateUserDto
+    Object.assign(user, updateUserDto);
 
-    // Actualizar el campo 'validated' del usuario
-    user.validated = validated;
+    // Guardamos los cambios en la base de datos
+    await this.userRepository.save(user);
 
     
 
-    // Guardar los cambios en la base de datos
-    await this.updateValidate(userId, user);
+    return user;
 
-    
-
-    // Generar un nuevo token JWT con los datos del usuario validado
-    const payload = {
-      id: user.id,
-      name: user.name,
-      lastname: user.lastname,
-      validated: user.validated
-    };
-    const newToken = this.jwtService.sign(payload);
-
-    // Puedes retornar un objeto de respuesta que incluye el nuevo token
-    return {
-      ok:true,
-      message: 'Usuario validado correctamente',
-      token: newToken, // Aquí incluyes el nuevo token en la respuesta
-    };
   }
 
-  async findOne(id: number): Promise<Users | undefined> {
-    return this.userRepository.findOne({
+  async updatePassword(id: number, updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.userRepository.findOne({
       where:{
         id: id
       }
     });
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    // Verificar si la contraseña anterior es correcta
+    const isPasswordValid = await compare(
+      updatePasswordDto.oldPassword,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Contraseña anterior incorrecta');
+    }
+
+    // Cifrar la nueva contraseña
+    const hashedPassword = await hash(updatePasswordDto.newPassword, 10);
+
+    // Actualizar la contraseña en el usuario
+    user.password = hashedPassword;
+
+    // Guardar los cambios en la base de datos
+    await this.userRepository.save(user);
+
+    return {
+      ok: true,
+      msg: 'Contraseña cambiada'
+    }
+
   }
 
-  async updateValidate(id: number, user: Users): Promise<Users> {
-    await this.userRepository.update(id, user);
-    return user;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
 
   remove(id: number) {
     return `This action removes a #${id} user`;

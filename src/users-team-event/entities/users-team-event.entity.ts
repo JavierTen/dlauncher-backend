@@ -17,6 +17,7 @@ export class UsersTeamsEvents {
     @ManyToOne(() => Teams) // Establece la relación muchos a uno con la entidad Equipos
     @JoinColumn({ name: 'teamId' }) // Nombre de la columna en la tabla RegistroEquipos que guarda la FK
     team: Teams; // Nombre de la propiedad en la entidad RegistroEquipos para acceder al equipo relacionado
+    
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date

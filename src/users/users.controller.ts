@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthgGuard } from 'src/auth/auth.guard';
 import { JwtService } from '@nestjs/jwt'
 import * as nodemailer from 'nodemailer';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 
 @Controller('users')
@@ -14,17 +15,18 @@ export class UsersController {
 
   @Post('create')
   async create(@Body() newUser: CreateUserDto) {
-    const createdUser = await this.usersService.create(newUser);    
+    const createdUser = await this.usersService.create(newUser);
     const payload = {
       id: createdUser.id,
       name: createdUser.name,
       lastname: createdUser.lastname,
-      validate: createdUser.validated
+      validate: createdUser.validated,
+      avatar: createdUser.avatar
     }
 
     const token = await this.jwtService.sign(payload)
-    
-    
+
+
     return {
       ok: true,
       token
@@ -35,7 +37,7 @@ export class UsersController {
   @UseGuards(JwtAuthgGuard)
   @Get('byEmail')
   async getUserByEmail(@Body('email') email: string) {
-    try {      
+    try {
       const user = await this.usersService.findByEmail(email);
       if (user) {
         return {
@@ -56,28 +58,76 @@ export class UsersController {
     }
   }
 
+  @Get('byId/:idUser')
+  async getUserById(@Param('idUser') idUser: number) {
+    try {
+      const user = await this.usersService.findById(idUser);
+      if (user) {
+        return {
+          ok: true,
+          user,
+        };
+      } else {
+        throw new HttpException(
+          {
+            ok: false,
+            error: 'USER_NOT_FOUND',
+          },
+          HttpStatus.NOT_FOUND
+        );
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Get('events/:idUser')
   find(@Param('idUser') idUser: number) {
-    
+
     return this.usersService.findUserEvents(idUser);
   }
 
-  @Post('validate/:id')
-  async validateUser(@Param('id') id: string, @Body() { token, validated }: { token: string; validated: boolean }) {
-    return this.usersService.validateUser(+id, token, validated);
+  @Put(':id')
+  async updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.updateUser(id, updateUserDto);
+
+    const payload = {
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      validate: user.validated,
+      avatar: user.avatar
+    }
+
+    const token = await this.jwtService.sign(payload)
+
+
+    return {
+      ok: true,
+      token
+    };
+
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //   return this.usersService.update(+id, updateUserDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
 
-  
+  @Put(':id/update-password')
+  async updatePassword(
+    @Param('id') id: number,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    const update = await this.usersService.updatePassword(id, updatePasswordDto);
+    
+    return update
+  }
 
 
 

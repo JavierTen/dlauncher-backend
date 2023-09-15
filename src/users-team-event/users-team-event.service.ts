@@ -12,17 +12,51 @@ import { Events } from 'src/events/entities/event.entity';
 export class UsersTeamEventService {
 
   constructor(
-    @InjectRepository(UsersTeamsEvents) private userRepository: Repository<UsersTeamsEvents>,
-
+    @InjectRepository(UsersTeamsEvents) private userTeamEventRepository: Repository<UsersTeamsEvents>,
+    @InjectRepository(Teams) private teamRepository: Repository<Teams>,
   ) { }
 
   async createUTE(usersTeamEvent) {
-    
 
-    const newUTE = this.userRepository.create(usersTeamEvent)
+    const { teamId } = usersTeamEvent
+
+    // 1. Obtiene el equipo asociado al evento
+    const team = await this.teamRepository.findOne({
+      where: {
+        id: teamId
+      },
+      relations: ['event'],
+    });
+
+    console.log(team.event)
+
+    //2. Obtiene el número máximo de integrantes permitidos en el evento
+    const maxMembers = team.event.maxMembers;
+
+
+    // // 3. Cuenta cuántos miembros ya están registrados en el equipo para el evento
+    const currentMembersCount = await this.userTeamEventRepository.count({
+      where: {
+        team: { id: team.id }, // Proporciona un objeto que representa la entidad Teams
+      },
+    });
+
+    console.log(currentMembersCount)
+
+
+    //6. Verifica si el equipo está completo
+    if (currentMembersCount >= maxMembers) {
+      return {
+        ok: false,
+        message: 'El equipo ya está completo para este evento.',
+      };
+    }
+
+
+    const newUTE = this.userTeamEventRepository.create(usersTeamEvent)
     try {
 
-      const UTE = await this.userRepository.save(newUTE)
+      const UTE = await this.userTeamEventRepository.save(newUTE)
 
       return {
         ok: true,
@@ -49,34 +83,34 @@ export class UsersTeamEventService {
   }
 
   async remove(id: number) {
-    
+
     try {
-      const removeUTE = await this.userRepository.findOne({
-        where:{
-          user: {id}
+      const removeUTE = await this.userTeamEventRepository.findOne({
+        where: {
+          user: { id }
         }
       })
 
-      
 
-      if(!removeUTE){
-        return{
+
+      if (!removeUTE) {
+        return {
           ok: false,
           error: 'USER_DOES_NOT_EXIST'
         };
       }
 
-      await this.userRepository.remove(removeUTE);
-      
+      await this.userTeamEventRepository.remove(removeUTE);
+
       return {
         ok: true,
         msg: 'USER_DELETE_TEAM'
       };
-      
-      
+
+
     } catch (error) {
       return error
     }
-    
+
   }
 }

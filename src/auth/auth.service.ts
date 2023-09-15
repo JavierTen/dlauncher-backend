@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt'
+import { find } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -29,11 +30,15 @@ export class AuthService {
     const checkPassword = await compare(password, findUser.password);
     if(!checkPassword) throw new HttpException ('PASSWORD_INCORRECT', 403)
 
+    
+
     const payload = {
       id: findUser.id,
       name: findUser.name,
       lastname: findUser.lastname,
-      validate: findUser.validated
+      validate: findUser.validated,
+      avatar: findUser.avatar,
+      rol: findUser.role.name
     }
     const token = await this.jwtService.sign(payload)
 

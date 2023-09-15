@@ -1,10 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-
+import { ConfigService } from '@nestjs/config';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule); 
+  dotenv.config();
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService)
+
   app.enableCors({
     allowedHeaders: '*',
     origin: '*',
@@ -12,9 +16,9 @@ async function bootstrap() {
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe())
-  await app.listen(3000);
+  await app.listen(configService.get('PORT'));
 } 
-
+ 
 bootstrap();  
 
 
