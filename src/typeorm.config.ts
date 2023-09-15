@@ -12,7 +12,7 @@ const typeOrmConfig = async (configService: ConfigService): Promise<TypeOrmModul
     database: configService.get<string>('DB_DATABASE'),
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
-  };
+  }; 
 };
 
 export default typeOrmConfig;
