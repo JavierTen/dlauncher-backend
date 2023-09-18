@@ -3,11 +3,22 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 
 async function bootstrap() {
   dotenv.config();
-  const app = await NestFactory.create(AppModule);
+
+  const httpsOptions = {
+    key: fs.readFileSync('./etc/ssl/web14.key' , 'utf8'),
+    cert: fs.readFileSync('./etc/ssl/STAR_bucaramanga_upb_edu_co.crt', 'utf8'),
+  };
+
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,});
   const configService = app.get(ConfigService)
+
+  
+  
 
   app.enableCors({
     allowedHeaders: '*',
