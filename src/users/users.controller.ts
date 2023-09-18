@@ -16,13 +16,24 @@ export class UsersController {
   @Post('create')
   async create(@Body() newUser: CreateUserDto) {
     const createdUser = await this.usersService.create(newUser);
+    var role: string;
+    if(String(createdUser.role) === '1'){
+      role = 'user';
+    }
+    if(String(createdUser.role) === '2'){
+      role = 'admin';
+    }
+    if(String(createdUser.role) === '3'){
+      role = 'jury';
+    }
+    
     const payload = {
       id: createdUser.id,
       name: createdUser.name,
       lastname: createdUser.lastname,
       validate: createdUser.validated,
       avatar: createdUser.avatar,
-      rol: createdUser.role.name
+      rol: role
     }
 
     const token = await this.jwtService.sign(payload)

@@ -63,6 +63,8 @@ export class UsersService {
 
       await this.userRepository.save(newUser)
 
+      console.log(newUser)
+
       return newUser
 
     } catch (error) {
