@@ -21,7 +21,8 @@ export class UsersController {
       name: createdUser.name,
       lastname: createdUser.lastname,
       validate: createdUser.validated,
-      avatar: createdUser.avatar
+      avatar: createdUser.avatar,
+      rol: createdUser.role.name
     }
 
     const token = await this.jwtService.sign(payload)
