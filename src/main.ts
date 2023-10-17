@@ -8,9 +8,20 @@ import * as fs from 'fs';
 async function bootstrap() {
   dotenv.config();
 
+  const web14 = './etc/ssl/web14.key';
+  const STAR = './etc/ssl/STAR_bucaramanga_upb_edu_co.crt';
+
+  if (fs.existsSync(web14) && fs.existsSync(STAR)) {
+    // El archivo existe, ahora puedes abrirlo.
+    const fileContent = fs.readFileSync(web14, 'utf8');
+    // Continúa con el procesamiento del archivo.
+  } else {
+    console.error(`El archivo ${web14} no existe.`);
+  }
+
   const httpsOptions = {
-    key: fs.readFileSync('./etc/ssl/web14.key' , 'utf8'),
-    cert: fs.readFileSync('./etc/ssl/STAR_bucaramanga_upb_edu_co.crt', 'utf8'),
+    key: fs.readFileSync(web14 , 'utf8'),
+    cert: fs.readFileSync(STAR, 'utf8'),
   };
 
   
