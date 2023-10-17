@@ -12,6 +12,7 @@ import { CreateUserByAdminDto } from './dto/create-user-by-admin.dto';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { EventEvaluator } from 'src/event-evaluator/entities/event-evaluator.entity';
+import { SaveEvaluatorDto } from 'src/event-evaluator/dto/save-event-evaluator.dto';
 
 
 
