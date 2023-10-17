@@ -8,8 +8,8 @@ import * as fs from 'fs';
 async function bootstrap() {
   dotenv.config();
 
-  const web14 = './etc/ssl/web14.key';
-  const STAR = './etc/ssl/STAR_bucaramanga_upb_edu_co.crt';
+  const web14 = '/etc/ssl/web14.key';
+  const STAR = '/etc/ssl/STAR_bucaramanga_upb_edu_co.crt';
 
   if (fs.existsSync(web14) && fs.existsSync(STAR)) {
     // El archivo existe, ahora puedes abrirlo.
