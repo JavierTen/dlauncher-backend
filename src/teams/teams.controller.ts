@@ -36,10 +36,18 @@ export class TeamsController {
     return this.teamsService.findAllMembers();
   }
 
+  @Get('count')
+  async countTeams(): Promise<{ count: number }> {
+    const count = await this.teamsService.total();
+    return { count };
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: number) {
     return this.teamsService.findOne(id);
   }
+
+  
 
   @Get('token/:token/:id')
   findByToken
@@ -55,7 +63,7 @@ export class TeamsController {
     return this.teamsService.findByEvent(+event, +user);
   }
 
-
+  
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {

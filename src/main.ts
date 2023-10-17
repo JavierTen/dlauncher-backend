@@ -13,8 +13,12 @@ async function bootstrap() {
     cert: fs.readFileSync('./etc/ssl/STAR_bucaramanga_upb_edu_co.crt', 'utf8'),
   };
 
+  
   const app = await NestFactory.create(AppModule, {
     httpsOptions,});
+
+  
+  // const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService)
 
   

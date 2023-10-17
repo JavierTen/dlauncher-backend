@@ -14,6 +14,8 @@ import { UsersTeamEventModule } from './users-team-event/users-team-event.module
 import { DepartamentModule } from './departament/departament.module';
 import { MunicipalityModule } from './municipality/municipality.module';
 import { DocumentTypeModule } from './document-type/document-type.module';
+import { EventEvaluatorModule } from './event-evaluator/event-evaluator.module';
+
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { DocumentTypeModule } from './document-type/document-type.module';
     DepartamentModule,
     MunicipalityModule,
     DocumentTypeModule,
+    EventEvaluatorModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query, HttpException, HttpStatus, UseGuards, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,20 +13,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService,
     private jwtService: JwtService) { }
 
-  @Post('create')
-  async create(@Body() newUser: CreateUserDto) {
-    const createdUser = await this.usersService.create(newUser);
+  @Post('create-by-admin')
+  async createByAdmin(@Body() newUser: CreateUserDto) {
+    const createdUser = await this.usersService.createByAdmin(newUser);
     var role: string;
-    if(String(createdUser.role) === '1'){
+    if (String(createdUser.role) === '1') {
       role = 'user';
     }
-    if(String(createdUser.role) === '2'){
-      role = 'admin';
+
+    if (String(createdUser.role) === '3') {
+      role = 'evaluator';
     }
-    if(String(createdUser.role) === '3'){
-      role = 'jury';
-    }
-    
+
     const payload = {
       id: createdUser.id,
       name: createdUser.name,
@@ -46,28 +44,43 @@ export class UsersController {
 
   }
 
-  @UseGuards(JwtAuthgGuard)
-  @Get('byEmail')
-  async getUserByEmail(@Body('email') email: string) {
-    try {
-      const user = await this.usersService.findByEmail(email);
-      if (user) {
-        return {
-          ok: true,
-          error: user,
-        };
-      } else {
-        throw new HttpException(
-          {
-            ok: false,
-            error: 'USER_NOT_FOUND',
-          },
-          HttpStatus.NOT_FOUND
-        );
-      }
-    } catch (error) {
-      throw error;
+  @Post('create')
+  async create(@Body() newUser: CreateUserDto) {
+    const createdUser = await this.usersService.create(newUser);
+    var role: string;
+    if (String(createdUser.role) === '1') {
+      role = 'user';
     }
+    if (String(createdUser.role) === '2') {
+      role = 'admin';
+    }
+    if (String(createdUser.role) === '3') {
+      role = 'jury';
+    }
+
+    const payload = {
+      id: createdUser.id,
+      name: createdUser.name,
+      lastname: createdUser.lastname,
+      validate: createdUser.validated,
+      avatar: createdUser.avatar,
+      rol: role
+    }
+
+    const token = await this.jwtService.sign(payload)
+
+
+    return {
+      ok: true,
+      token
+    };
+
+  }
+  
+  @Post('byEmail')
+  async getUserByEmail(@Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.getUserByEmail(updateUserDto);
+    
   }
 
   @Get('byId/:idUser')
@@ -99,6 +112,36 @@ export class UsersController {
     return this.usersService.findUserEvents(idUser);
   }
 
+  @Get('evaluators')
+  async findEvaluators() {
+    const users = await this.usersService.findEvaluators();
+    return users
+  }
+  
+  @Get()
+  async findUsers() {
+    const users = await this.usersService.findUsers();
+    return users
+  }
+
+  @Get('count-users')
+  async countUsers(): Promise<{ count: number }> {
+    const count = await this.usersService.countUsers();
+    return { count };
+  }
+
+  @Get('count-evaluators')
+  async countEvaluators(): Promise<{ count: number }> {
+    const count = await this.usersService.countEvaluators();
+    return { count };
+  }
+
+  @Put('forgot-password')
+  async updatePasswordForgot(@Body() updateUserDto: UpdateUserDto) {
+    const update = await this.usersService.updatePasswordForgot(updateUserDto);
+    return update
+  }
+
   @Put(':id')
   async updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.updateUser(id, updateUserDto);
@@ -127,19 +170,17 @@ export class UsersController {
   // }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async deleteUser(@Param('id') id: string) {
+    const deleted = await this.usersService.deleteUserById(+id);
+
+    if (!deleted) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado.`);
+    }
+
+    return { message: `Usuario con ID ${id} eliminado correctamente.` };
   }
 
-  @Put(':id/update-password')
-  async updatePassword(
-    @Param('id') id: number,
-    @Body() updatePasswordDto: UpdatePasswordDto,
-  ) {
-    const update = await this.usersService.updatePassword(id, updatePasswordDto);
-    
-    return update
-  }
+  
 
 
 

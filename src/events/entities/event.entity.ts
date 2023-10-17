@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn } from 'typeorm'
+import { Users } from 'src/users/entities/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm'
 
 
 @Entity()
@@ -15,8 +16,17 @@ export class Events {
     @Column({ type: 'datetime' })
     endsAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
 
+    @Column({nullable: true, type: 'datetime' })
+    closeAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
+
     @Column({ type: 'int' })
     maxMembers: number; // Cantidad máxima de integrantes por equipo
+
+    @Column()
+    post: boolean; // Columna para indicar si el usuario está validado
+
+    @Column('text')
+    description: string;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date; // Columna para almacenar la fecha y hora de creación, con valor por defecto actual
@@ -24,5 +34,6 @@ export class Events {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // Columna para almacenar la fecha y hora de actualización automáticamente
 
-
+    
 }
+

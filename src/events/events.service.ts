@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Events } from './entities/event.entity';
@@ -10,12 +10,40 @@ export class EventsService {
   constructor(@InjectRepository(Events) private eventRepository: Repository<Events>,
   ){  }
   
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  async create(eventCreate: CreateEventDto) {
+    const event = this.eventRepository.create(eventCreate);
+
+    try {
+      const name = await this.eventRepository.findOne({
+        where: {
+          name: eventCreate.name
+        }
+      })
+
+      if (name) {
+        throw new HttpException({
+          ok: false,
+          error: 'NAME_CONFLICT'
+        }, HttpStatus.CONFLICT);
+      }
+      
+    } catch (error) {
+      throw error;
+    }
+    
+    return await this.eventRepository.save(event);
   }
 
   findAll() {
-    return `This action returns all events`;
+    try {
+      return this.eventRepository.find({        
+        order: {
+          id: 'DESC', // Ordenar por la columna 'id' en orden descendente
+        }
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: number) {
@@ -44,6 +72,10 @@ export class EventsService {
       return error
     }
     
+  }
+
+  async countEvents(): Promise<number> {
+    return this.eventRepository.count();
   }
 
   update(id: number, updateEventDto: UpdateEventDto) {

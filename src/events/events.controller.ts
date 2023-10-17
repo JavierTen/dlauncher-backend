@@ -8,13 +8,23 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
+  async create(@Body() createEventDto: CreateEventDto) {
+    const event = await this.eventsService.create(createEventDto);
+    return {
+      ok: true,
+      event
+    };
   }
 
   @Get()
   findAll() {
     return this.eventsService.findAll();
+  }
+
+  @Get('count')
+  async countEvents(): Promise<{ count: number }> {
+    const count = await this.eventsService.countEvents();
+    return { count };
   }
 
   @Get(':id')

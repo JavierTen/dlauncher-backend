@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { Teams } from './entities/team.entity';
@@ -12,6 +12,7 @@ export class TeamsService {
 
   constructor(
     @InjectRepository(Teams) private teamRepository: Repository<Teams>,
+    @InjectRepository(Teams) private teamsRepository: Repository<Teams>,
     @InjectRepository(UsersTeamsEvents) private userRepository: Repository<UsersTeamsEvents>,
   ) { }
 
@@ -70,11 +71,13 @@ export class TeamsService {
 
   }
 
-  findAllMembers() {
+  async findAllMembers() {
     return `This action returns all teams`;
   }
 
-  async findOne(id: number) {   
+  
+
+  async findOne(id: number) {
     try {
       const findTeam = await this.teamRepository.findOne({
         where: {
@@ -112,9 +115,8 @@ export class TeamsService {
 
   }
 
-
   async findByToken(token: string, userId: number) {
-    
+
     try {
       const findTeam = await this.teamRepository.findOne({
         where: {
@@ -131,7 +133,7 @@ export class TeamsService {
       }
 
       const usuario = await this.userRepository.find({
-        where: {          
+        where: {
           team: {
             event: { id: findTeam.event.id }
           }
@@ -140,7 +142,7 @@ export class TeamsService {
       });
 
       const seEncontro = usuario.some(item => item.user.id === userId);
-      if(seEncontro){
+      if (seEncontro) {
         return {
           ok: false,
           error: 'USER_EVENT_CONFLICT',
@@ -155,9 +157,6 @@ export class TeamsService {
       };
 
 
-
-
-
     } catch (error) {
       return error
     }
@@ -165,7 +164,7 @@ export class TeamsService {
   }
 
   async findByEvent(eventId: number, id: number) {
-    
+
     try {
 
       const findTeam = await this.userRepository.find({
@@ -174,8 +173,8 @@ export class TeamsService {
         },
         relations: ['team.event']
       })
-      
-      
+
+
       const team = findTeam.filter(usuario => usuario.team.event.id === eventId);
 
       const data = team.map(usuario => ({
@@ -191,7 +190,7 @@ export class TeamsService {
         data
       };
 
-      
+
     } catch (error) {
       return error
     }
@@ -204,5 +203,14 @@ export class TeamsService {
 
   remove(id: number) {
     return `This action removes a #${id} team`;
+  }
+
+  async total(): Promise<number> {
+    try {
+      const count = await this.teamsRepository.count();
+      return count;
+    } catch (error) {
+      throw new HttpException('Error counting teams', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
