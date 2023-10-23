@@ -2,7 +2,7 @@ import { IsArray, IsInt, IsNotEmpty, IsNumberString, IsPositive, IsString, Lengt
 
 export class SaveEvaluatorDto {
     
-    userId: number;
+    userId: number[];
 
     eventId: number;
 }

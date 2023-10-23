@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Put, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
@@ -42,6 +42,16 @@ export class TeamsController {
     return { count };
   }
 
+  @Get('byEvent/:id')
+  async byEvent(@Param('id') id: number) {
+    return this.teamsService.byEvent(id);
+  }
+
+  @Get('byID/:id')
+  async find(@Param('id') id: number) {
+    return this.teamsService.find(id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.teamsService.findOne(id);
@@ -65,7 +75,7 @@ export class TeamsController {
 
   
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
     return this.teamsService.update(+id, updateTeamDto);
   }

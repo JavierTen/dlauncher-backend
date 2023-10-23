@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { Teams } from './entities/team.entity';
@@ -74,8 +74,33 @@ export class TeamsService {
   async findAllMembers() {
     return `This action returns all teams`;
   }
-
   
+  async find(id: number) {
+    try {
+      const team = await this.teamRepository.findOne({
+        where: {
+          id: id
+        },
+      })      
+
+      if (!team) {
+        return {
+          ok: false,
+          error: 'TEAM_DOES_NOT_EXIST',
+        };
+      }
+
+      return {
+        ok: true,
+        team
+      };
+
+
+    } catch (error) {
+      return error
+    }
+
+  }
 
   async findOne(id: number) {
     try {
@@ -163,6 +188,33 @@ export class TeamsService {
 
   }
 
+  async byEvent(id: number) {
+
+    try {
+
+      const findTeam = await this.teamRepository.find({
+        where: {
+          event: { 
+            id: id 
+          }
+        }
+      })
+
+
+      
+
+      return {
+        ok: true,
+        data: findTeam
+      };
+
+
+    } catch (error) {
+      return error
+    }
+
+  }
+
   async findByEvent(eventId: number, id: number) {
 
     try {
@@ -179,6 +231,8 @@ export class TeamsService {
 
       const data = team.map(usuario => ({
         eventName: usuario.team.event.name,
+        startDate: usuario.team.event.startAt,
+        closeDate: usuario.team.event.endsAt,
         rolUserTeam: usuario.rol,
         idTeam: usuario.team.id,
         nameTeam: usuario.team.name,
@@ -197,8 +251,41 @@ export class TeamsService {
 
   }
 
-  update(id: number, updateTeamDto: UpdateTeamDto) {
-    return `This action updates a #${id} team`;
+  async update(id: number, updateTeamDto: UpdateTeamDto) {
+    const team = await this.teamRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!team) {
+      throw new NotFoundException('Equipo no encontrado');
+    }
+
+    if (updateTeamDto.project) {
+      team.project = updateTeamDto.project;
+    }
+
+    if (updateTeamDto.description) {
+      team.description = updateTeamDto.description;
+    }
+
+    if (updateTeamDto.youtube) {
+      team.youtube = updateTeamDto.youtube;
+    }
+
+    if (updateTeamDto.github) {
+      team.github = updateTeamDto.github;
+    }
+
+    const update = this.teamRepository.save(team);
+
+    return {
+      ok: true,
+      update
+    }
+
+    
   }
 
   remove(id: number) {

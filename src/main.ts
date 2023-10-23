@@ -13,36 +13,38 @@ async function bootstrap() {
 
   if (fs.existsSync(web14) && fs.existsSync(STAR)) {
     // El archivo existe, ahora puedes abrirlo.
-    const fileContent = fs.readFileSync(web14, 'utf8');
+    const httpsOptions = {
+      key: fs.readFileSync(web14 , 'utf8'),
+      cert: fs.readFileSync(STAR, 'utf8'),
+    };
+    const app = await NestFactory.create(AppModule, {
+      httpsOptions,});
+      app.enableCors({
+        allowedHeaders: '*',
+        origin: '*',
+        credentials: false,
+      });
+      app.setGlobalPrefix('api');
+      app.useGlobalPipes(new ValidationPipe())
+      const configService = app.get(ConfigService)
+      await app.listen(configService.get('PORT'));
     // Continúa con el procesamiento del archivo.
   } else {
-    console.error(`El archivo ${web14} no existe.`);
+    const app = await NestFactory.create(AppModule);
+    const configService = app.get(ConfigService)
+    app.enableCors({
+      allowedHeaders: '*',
+      origin: '*',
+      credentials: false,
+    });
+    app.setGlobalPrefix('api');
+    app.useGlobalPipes(new ValidationPipe())
+    await app.listen(configService.get('PORT'));
   }
 
-  const httpsOptions = {
-    key: fs.readFileSync(web14 , 'utf8'),
-    cert: fs.readFileSync(STAR, 'utf8'),
-  };
-
-  
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions,});
-
-  
-  // const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService)
-
-  
   
 
-  app.enableCors({
-    allowedHeaders: '*',
-    origin: '*',
-    credentials: false,
-  });
-  app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe())
-  await app.listen(configService.get('PORT'));
+  
 } 
  
 bootstrap();  

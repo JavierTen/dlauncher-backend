@@ -8,9 +8,41 @@ import { SaveEvaluatorDto } from './dto/save-event-evaluator.dto';
 export class EventEvaluatorController {
   constructor(private readonly eventEvaluatorService: EventEvaluatorService) {}
 
+  @Post('add-evaluator-event')
+  async add(@Body() createObject: EvaluatorDto) {
+    try {
+      const event = await this.eventEvaluatorService.add(createObject);
+      return event
+    } catch (error) {
+      throw new HttpException(
+        {
+          ok: false          
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    
+    return event
+    
+  }
+
+
   @Post()
   async create(@Body() createObject: SaveEvaluatorDto) {
-    const event = await this.eventEvaluatorService.create(createObject);
+    try {
+      const event = await this.eventEvaluatorService.create(createObject);
+      return event
+    } catch (error) {
+      throw new HttpException(
+        {
+          ok: false          
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    
+    return event
+    
   }
 
   @Get()
@@ -18,9 +50,14 @@ export class EventEvaluatorController {
     return this.eventEvaluatorService.findAll();
   }
 
+  @Get('events/:id')
+  findEventsEvaluator(@Param('id') id: number) {
+    return this.eventEvaluatorService.findEventsEvaluator(id);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventEvaluatorService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.eventEvaluatorService.findOne(id);
   }
 
   @Patch(':id')
@@ -28,8 +65,8 @@ export class EventEvaluatorController {
     return this.eventEvaluatorService.update(+id, updateEventEvaluatorDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventEvaluatorService.remove(+id);
+  @Delete(':idUser/:idEvent')
+  remove(@Param('idUser') userId: string, @Param('idEvent') eventId: string) {
+    return this.eventEvaluatorService.remove(+userId,+eventId);
   }
 }

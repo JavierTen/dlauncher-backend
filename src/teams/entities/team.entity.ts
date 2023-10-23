@@ -31,6 +31,18 @@ export class Teams {
     this.token = this.generateRandomToken(6); // Cambia la longitud si es necesario
   }
 
+  @Column({ type: 'text', nullable: true })
+  project: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ type: 'text', nullable: true })
+  youtube: string;
+
+  @Column({ type: 'text', nullable: true })
+  github: string;
+
   @ManyToOne(() => Events) // Establece la relación muchos a uno con la entidad Eventos
   @JoinColumn({ name: 'eventId' }) // Nombre de la columna en la tabla Equipos que guarda la FK
   event: Events;
