@@ -33,24 +33,26 @@ export class UsersTeamEventService {
 
 
     // // 3. Cuenta cuántos miembros ya están registrados en el equipo para el evento
-    const currentMembersCount = await this.userTeamEventRepository.count({
+    const currentMembersCount = await this.userTeamEventRepository.find({
       where: {
         team: { id: team.id }, // Proporciona un objeto que representa la entidad Teams
       },
     });
-
+    
+    const countMembers = currentMembersCount.length
+    
     
 
 
     //6. Verifica si el equipo está completo
-    if (currentMembersCount >= maxMembers) {
+    if (countMembers >= maxMembers) {
       return {
         ok: false,
         message: 'El equipo ya está completo para este evento.',
       };
     }
 
-    if(currentMembersCount < maxMembers){
+    if(countMembers < maxMembers){
       const newUTE = this.userTeamEventRepository.create(usersTeamEvent)
       try {
   
