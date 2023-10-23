@@ -28,8 +28,6 @@ export class UsersTeamEventService {
       relations: ['event'],
     });
 
-    console.log(team.event)
-
     //2. Obtiene el número máximo de integrantes permitidos en el evento
     const maxMembers = team.event.maxMembers;
 
@@ -41,7 +39,7 @@ export class UsersTeamEventService {
       },
     });
 
-    console.log(currentMembersCount)
+    
 
 
     //6. Verifica si el equipo está completo
@@ -52,21 +50,24 @@ export class UsersTeamEventService {
       };
     }
 
-
-    const newUTE = this.userTeamEventRepository.create(usersTeamEvent)
-    try {
-
-      const UTE = await this.userTeamEventRepository.save(newUTE)
-
-      return {
-        ok: true,
-        UTE
-      };
-
-
-    } catch (error) {
-      return error
+    if(currentMembersCount < maxMembers){
+      const newUTE = this.userTeamEventRepository.create(usersTeamEvent)
+      try {
+  
+        const UTE = await this.userTeamEventRepository.save(newUTE)
+  
+        return {
+          ok: true,
+          UTE
+        };
+  
+  
+      } catch (error) {
+        return error
+      }
     }
+
+    
 
   }
 
