@@ -15,6 +15,7 @@ import { DepartamentModule } from './departament/departament.module';
 import { MunicipalityModule } from './municipality/municipality.module';
 import { DocumentTypeModule } from './document-type/document-type.module';
 import { EventEvaluatorModule } from './event-evaluator/event-evaluator.module';
+import { EvaluatorQualificationModule } from './evaluator-qualification/evaluator-qualification.module';
 
 
 @Module({
@@ -36,6 +37,7 @@ import { EventEvaluatorModule } from './event-evaluator/event-evaluator.module';
     MunicipalityModule,
     DocumentTypeModule,
     EventEvaluatorModule,
+    EvaluatorQualificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

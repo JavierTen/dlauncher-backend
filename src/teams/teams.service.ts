@@ -236,7 +236,8 @@ export class TeamsService {
         rolUserTeam: usuario.rol,
         idTeam: usuario.team.id,
         nameTeam: usuario.team.name,
-        tokenTeam: usuario.team.token
+        tokenTeam: usuario.team.token,
+        idEvent: usuario.team.event.id
       }));
 
       return {

@@ -31,6 +31,9 @@ export class Teams {
     this.token = this.generateRandomToken(6); // Cambia la longitud si es necesario
   }
 
+  @Column({ type: 'double precision', default: 0 })
+  score: number;
+
   @Column({ type: 'text', nullable: true })
   project: string;
 

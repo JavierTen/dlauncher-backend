@@ -3,7 +3,11 @@ import { CreateTeamDto } from './create-team.dto';
 import { IsString, IsOptional } from 'class-validator';
 
 export class UpdateTeamDto {
-    @IsString()
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
   @IsOptional()
   project?: string;
 
@@ -18,4 +22,10 @@ export class UpdateTeamDto {
   @IsString()
   @IsOptional()
   github?: string;
+
+  @IsOptional()
+  score?: number;
+
+  @IsOptional()
+  event?: number;
 }
