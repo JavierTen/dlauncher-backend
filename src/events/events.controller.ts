@@ -21,15 +21,20 @@ export class EventsController {
     return this.eventsService.findAll();
   }
 
-  @Get('count')
-  async countEvents(): Promise<{ count: number }> {
-    const count = await this.eventsService.countEvents();
-    return { count };
+  @Get('toHome')
+  findToHome() {
+    return this.eventsService.findToHome();
   }
 
-  @Get(':id')
+  @Get('count')
+  async countEvents(): Promise<{ count: number }> {
+    const count = await this.eventsService.countEvents(); 
+    return { count };
+  } 
+
+  @Get(':id') 
   findOne(@Param('id') id: number) {
-    return this.eventsService.findOne(id);
+    return this.eventsService.findOne(id);  
   }
 
   @Put(':id')

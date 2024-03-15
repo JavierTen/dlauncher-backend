@@ -21,8 +21,8 @@ async function bootstrap() {
       httpsOptions,});
       app.enableCors({
         allowedHeaders: '*',
-        origin: '*',
-        credentials: false,
+        origin: 'http://localhost:4200',
+        credentials: false, 
       });
       app.setGlobalPrefix('api');
       app.useGlobalPipes(new ValidationPipe())

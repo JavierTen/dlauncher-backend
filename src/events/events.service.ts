@@ -36,11 +36,57 @@ export class EventsService {
 
   findAll() {
     try {
-      return this.eventRepository.find({
-        order: {
-          id: 'DESC', // Ordenar por la columna 'id' en orden descendente
-        }
-      });
+      const currentDate = new Date().toISOString();
+  
+      return this.eventRepository
+        .createQueryBuilder('event')
+        .select([
+          'event.id',
+          'event.name',
+          'event.startAt',
+          'event.endsAt',
+          `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
+          `CASE
+            WHEN event.startAt > :currentDate THEN 1
+            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 2
+            WHEN event.endsAt < :currentDate THEN 3
+            ELSE NULL
+          END AS status`,
+        ])
+        .orderBy('event.id', 'DESC')
+        .setParameter('currentDate', currentDate)
+        .getRawMany();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
+
+  findToHome() {
+    try {
+      const currentDate = new Date().toISOString();
+  
+      return this.eventRepository
+        .createQueryBuilder('event')
+        .select([
+          'event.id',
+          'event.name',
+          'event.startAt',
+          'event.endsAt',
+          `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
+          `CASE
+            WHEN event.startAt > :currentDate THEN 1
+            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 2
+            WHEN event.endsAt < :currentDate THEN 3
+            ELSE NULL
+          END AS status`,
+        ])
+        .orderBy('event.id', 'DESC')
+        .setParameter('currentDate', currentDate)
+        .take(3)
+        .getRawMany();
     } catch (error) {
       throw error;
     }
