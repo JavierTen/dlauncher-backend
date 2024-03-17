@@ -58,6 +58,7 @@ export class EventsService {
             ELSE NULL
           END AS status`,
         ])
+        .where('event.post = :post', { post: 1 })
         .orderBy('event.id', 'DESC')
         .setParameter('currentDate', currentDate)
         .getRawMany();
@@ -86,6 +87,7 @@ export class EventsService {
             ELSE NULL
           END AS status`,
         ])
+        .where('event.post = :post', { post: 1 })
         .orderBy('event.id', 'DESC')
         .setParameter('currentDate', currentDate)
         .take(3)
@@ -127,7 +129,8 @@ export class EventsService {
     try {
       const findEvent = await this.eventRepository.findOne({
         where: {
-          slug: slug
+          slug: slug,
+          post: true
         },
       })
 
