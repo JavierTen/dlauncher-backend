@@ -102,6 +102,36 @@ export class TeamsService {
 
   }
 
+  async findEventResults(id: number) {
+    try {
+      const team = await this.teamRepository.find({
+        where: {
+          event: {id}
+        },
+        order: {
+          score: 'DESC' // Ordenar por el campo score de mayor a menor
+        }
+      })      
+
+      if (!team) {
+        return {
+          ok: false,
+          error: 'TEAM_DOES_NOT_EXIST',
+        };
+      }
+
+      return {
+        ok: true,
+        team
+      };
+
+
+    } catch (error) {
+      return error
+    }
+
+  }
+
   async findOne(id: number) {
     try {
       const findTeam = await this.teamRepository.findOne({

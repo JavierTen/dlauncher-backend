@@ -52,6 +52,11 @@ export class TeamsController {
     return this.teamsService.find(id);
   }
 
+  @Get('results/:id')
+  async findEventResults(@Param('id') id: number) {
+    return this.teamsService.findEventResults(id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.teamsService.findOne(id);
