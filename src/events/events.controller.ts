@@ -18,10 +18,10 @@ export class EventsController {
 
   @Get()
   findAll() {
-    return this.eventsService.findAll();
+    return this.eventsService.findAll(); 
   } 
 
-  @Get('toHome')
+  @Get('toHome') 
   findToHome() {
     return this.eventsService.findToHome();
   }

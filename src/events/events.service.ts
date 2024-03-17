@@ -4,7 +4,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { Events } from './entities/event.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import  slugify  from 'slugify';
+var slug = require('slug')
 
 @Injectable()
 export class EventsService {
@@ -12,7 +12,7 @@ export class EventsService {
   ) { }
 
   async create(eventCreate: CreateEventDto) {
-    eventCreate.slug = slugify(eventCreate.name, { lower: true, replacement: '-' });
+    eventCreate.slug = slug (eventCreate.name, { lower: true, replacement: '-' });
     const event = this.eventRepository.create(eventCreate);
     
     try {
