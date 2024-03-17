@@ -4,6 +4,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { Events } from './entities/event.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import  slugify  from 'slugify';
 
 @Injectable()
 export class EventsService {
@@ -11,8 +12,9 @@ export class EventsService {
   ) { }
 
   async create(eventCreate: CreateEventDto) {
+    eventCreate.slug = slugify(eventCreate.name, { lower: true, replacement: '-' });
     const event = this.eventRepository.create(eventCreate);
-
+    
     try {
       const name = await this.eventRepository.findOne({
         where: {
@@ -26,6 +28,8 @@ export class EventsService {
           error: 'NAME_CONFLICT'
         }, HttpStatus.CONFLICT);
       }
+
+
 
     } catch (error) {
       throw error;

@@ -28,6 +28,9 @@ export class Events {
     @Column('text')
     description: string;
 
+    @Column('text')
+    slug: string;
+
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date; // Columna para almacenar la fecha y hora de creación, con valor por defecto actual
 

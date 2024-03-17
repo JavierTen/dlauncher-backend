@@ -19,7 +19,7 @@ export class EventsController {
   @Get()
   findAll() {
     return this.eventsService.findAll();
-  }
+  } 
 
   @Get('toHome')
   findToHome() {
