@@ -19,7 +19,12 @@ export class EventsController {
   @Get()
   findAll() {
     return this.eventsService.findAll(); 
-  } 
+  }
+
+  @Get('admin')
+  findAllAdmin() {
+    return this.eventsService.findAllAdmin(); 
+  }
 
   @Get('toHome') 
   findToHome() {

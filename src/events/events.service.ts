@@ -67,6 +67,34 @@ export class EventsService {
     }
   }
 
+  findAllAdmin() {
+    try {
+      const currentDate = new Date().toISOString();
+  
+      return this.eventRepository
+        .createQueryBuilder('event')
+        .select([
+          'event.id',
+          'event.name',
+          'event.startAt',
+          'event.endsAt',
+          'event.slug AS slug',
+          `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
+          `CASE
+            WHEN event.startAt > :currentDate THEN 'Próximamente'
+            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
+            WHEN event.endsAt < :currentDate THEN 'Finalizado'
+            ELSE NULL
+          END AS status`,
+        ])
+        .orderBy('event.id', 'DESC')
+        .setParameter('currentDate', currentDate)
+        .getRawMany();
+    } catch (error) {
+      throw error;
+    }
+  }
+
   findToHome() {
     try {
       const currentDate = new Date().toISOString();
