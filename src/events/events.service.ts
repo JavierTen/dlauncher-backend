@@ -4,7 +4,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { Events } from './entities/event.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-var slug = require('slug')
+
 
 @Injectable()
 export class EventsService {
@@ -12,7 +12,7 @@ export class EventsService {
   ) { }
 
   async create(eventCreate: CreateEventDto) {
-    eventCreate.slug = slug (eventCreate.name, { lower: true, replacement: '-' });
+    eventCreate.slug = await this.generateSlugWithAccents(eventCreate.name)
     const event = this.eventRepository.create(eventCreate);
     
     try {
@@ -64,9 +64,6 @@ export class EventsService {
       throw error;
     }
   }
-
-
-
 
   findToHome() {
     try {
@@ -154,6 +151,34 @@ export class EventsService {
       event
     }
 
+  }
+
+  async generateSlug(text: string): Promise<string> {
+    // Reemplazar caracteres especiales y espacios con guiones
+    const slug = text
+      .toLowerCase() // Convertir el texto a minúsculas
+      .replace(/[^\w\s-]/g, '') // Remover caracteres especiales excepto guiones
+      .replace(/\s+/g, '-') // Reemplazar espacios con guiones
+      .replace(/--+/g, '-') // Reemplazar múltiples guiones con uno solo
+      .trim(); // Remover espacios en blanco al principio y al final
+  
+    return slug;
+  }
+
+  async keepAccents(text: string): Promise<string> {
+    // Mantener letras con acentos reemplazando los caracteres especiales
+    const withAccents = {
+      'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'ü': 'u',
+      'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U', 'Ü': 'U'
+    };
+  
+    return text.replace(/[áéíóúüÁÉÍÓÚÜ]/g, match => withAccents[match]);
+  }
+
+  async generateSlugWithAccents(text: string): Promise<string> {
+    const cleanedText = await this.keepAccents(text); // Mantener letras con acentos
+    const slug = await this.generateSlug(cleanedText); // Generar slug sin caracteres especiales
+    return slug;
   }
 
   remove(id: number) {

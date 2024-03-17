@@ -28,7 +28,7 @@ export class EventsController {
 
   @Get('count')
   async countEvents(): Promise<{ count: number }> {
-    const count = await this.eventsService.countEvents(); 
+    const count = await this.eventsService.countEvents();  
     return { count };
   } 
 
