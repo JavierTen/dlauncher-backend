@@ -47,9 +47,9 @@ export class EventsService {
           'event.endsAt',
           `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
           `CASE
-            WHEN event.startAt > :currentDate THEN 1
-            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 2
-            WHEN event.endsAt < :currentDate THEN 3
+            WHEN event.startAt > :currentDate THEN 'Próximamente'
+            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
+            WHEN event.endsAt < :currentDate THEN 'Finalizado'
             ELSE NULL
           END AS status`,
         ])
@@ -77,9 +77,9 @@ export class EventsService {
           'event.endsAt',
           `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
           `CASE
-            WHEN event.startAt > :currentDate THEN 1
-            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 2
-            WHEN event.endsAt < :currentDate THEN 3
+            WHEN event.startAt > :currentDate THEN 'Próximamente'
+            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
+            WHEN event.endsAt < :currentDate THEN 'Finalizado'
             ELSE NULL
           END AS status`,
         ])
