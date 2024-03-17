@@ -21,7 +21,7 @@ async function bootstrap() {
       httpsOptions,});
       app.enableCors({
         allowedHeaders: '*',
-        origin: 'https://20fisi.bucaramanga.upb.edu.co/',
+        origin: '*',
         credentials: false, 
       });
       app.setGlobalPrefix('api');
