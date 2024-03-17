@@ -53,8 +53,8 @@ export class TeamsController {
   }
 
   @Get('results/:id')
-  async findEventResults(@Param('id') id: number) {
-    return this.teamsService.findEventResults(id);
+  async findTeamsResult(@Param('id') id: number) {
+    return this.teamsService.findTeamsResult(id);
   }
 
   @Get(':id')
@@ -69,7 +69,7 @@ export class TeamsController {
     (@Param('token',) token: string,
       @Param('id') id: number) {
     return this.teamsService.findByToken(token, +id);
-  }
+  } 
 
   @Get('event/:event/:user')
   findByEvent

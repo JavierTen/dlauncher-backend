@@ -74,14 +74,14 @@ export class TeamsService {
   async findAllMembers() {
     return `This action returns all teams`;
   }
-  
+
   async find(id: number) {
     try {
       const team = await this.teamRepository.findOne({
         where: {
           id: id
         },
-      })      
+      })
 
       if (!team) {
         return {
@@ -102,30 +102,28 @@ export class TeamsService {
 
   }
 
-  async findEventResults(id: number) {
+  async findTeamsResult(id: number) {
     try {
-      const team = await this.teamRepository.find({
+      const results = await this.teamRepository.find({
         where: {
-          event: {id}
-        },
+          event: {id}},
         order: {
-          score: 'DESC' // Ordenar por el campo score de mayor a menor
-        }
-      })      
+          score: 'DESC',
+        },
+        relations: ['usersTeamsEvents', 'usersTeamsEvents.user']
+      }
+      )
 
-      if (!team) {
+      if (!results) {
         return {
           ok: false,
           error: 'TEAM_DOES_NOT_EXIST',
         };
       }
-
       return {
         ok: true,
-        team
+        results
       };
-
-
     } catch (error) {
       return error
     }
@@ -224,14 +222,14 @@ export class TeamsService {
 
       const findTeam = await this.teamRepository.find({
         where: {
-          event: { 
-            id: id 
+          event: {
+            id: id
           }
         }
       })
 
 
-      
+
 
       return {
         ok: true,
@@ -316,7 +314,7 @@ export class TeamsService {
       update
     }
 
-    
+
   }
 
   remove(id: number) {

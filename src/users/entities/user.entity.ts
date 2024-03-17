@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne, JoinColumn, BeforeInsert, JoinTable, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne, JoinColumn, BeforeInsert, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { Roles } from '../../roles/entities/rol.entity'
 import { Municipality } from "src/municipality/entities/municipality.entity";
 import { DocumentType } from "src/document-type/entities/document-type.entity";
 import * as crypto from 'crypto';
 import { Events } from "src/events/entities/event.entity";
+import { UsersTeamsEvents } from "src/users-team-event/entities/users-team-event.entity";
 
 @Entity()  
 export class Users {
@@ -80,7 +81,5 @@ export class Users {
   @ManyToOne(() => Roles, role => role.users,{ eager: true })
   @JoinColumn({ name: 'roleId' })
   role: Roles; // Relación con la entidad Role, muchos usuarios pueden tener un mismo rol
-
-  
 
 }

@@ -1,6 +1,7 @@
 import { Events } from 'src/events/entities/event.entity';
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne, JoinColumn, BeforeInsert } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToOne, JoinColumn, BeforeInsert, OneToMany } from 'typeorm'
 import * as crypto from 'crypto';
+import { UsersTeamsEvents } from 'src/users-team-event/entities/users-team-event.entity';
 
 
 @Entity()
@@ -56,6 +57,9 @@ export class Teams {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date; // Columna para almacenar la fecha y hora de actualización automáticamente
 
+  @OneToMany(() => UsersTeamsEvents, usersTeamsEvents => usersTeamsEvents.team)
+  usersTeamsEvents: UsersTeamsEvents[];
 
+  
 
 }
