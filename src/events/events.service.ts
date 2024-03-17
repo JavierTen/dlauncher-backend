@@ -49,6 +49,7 @@ export class EventsService {
           'event.name',
           'event.startAt',
           'event.endsAt',
+          'event.slug AS slug',
           `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
           `CASE
             WHEN event.startAt > :currentDate THEN 'Próximamente'
@@ -76,6 +77,7 @@ export class EventsService {
           'event.name',
           'event.startAt',
           'event.endsAt',
+          'event.slug AS slug',
           `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
           `CASE
             WHEN event.startAt > :currentDate THEN 'Próximamente'
