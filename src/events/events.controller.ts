@@ -33,8 +33,13 @@ export class EventsController {
   } 
 
   @Get(':id') 
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: number) { 
     return this.eventsService.findOne(id);  
+  }
+
+  @Get('slug/:slug') 
+  findOneBySlug(@Param('slug') slug: string) { 
+    return this.eventsService.findOneBySlug(slug);  
   }
 
   @Put(':id')

@@ -123,6 +123,34 @@ export class EventsService {
 
   }
 
+  async findOneBySlug(slug: string) {
+    try {
+      const findEvent = await this.eventRepository.findOne({
+        where: {
+          slug: slug
+        },
+      })
+
+      if (!findEvent) {
+        return {
+          ok: false,
+          error: 'EVENT_DOES_NOT_EXIST',
+        };
+      }
+
+      return {
+        ok: true,
+        event: findEvent
+      };
+
+
+
+    } catch (error) {
+      return error
+    }
+
+  }
+
   async countEvents(): Promise<number> {
     return this.eventRepository.count();
   }
