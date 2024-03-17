@@ -78,6 +78,7 @@ export class EventsService {
           'event.name',
           'event.startAt',
           'event.endsAt',
+          'event.post AS post',
           'event.slug AS slug',
           `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
           `CASE
