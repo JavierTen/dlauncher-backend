@@ -9,7 +9,7 @@ export class Teams {
   @PrimaryGeneratedColumn()
   id: number; // Columna de clave primaria generada automáticamente
 
-  @Column({ unique: true })
+  @Column()
   name: string; // Columna para almacenar el nombre del equipo, debe ser único
 
   @Column({ unique: true })

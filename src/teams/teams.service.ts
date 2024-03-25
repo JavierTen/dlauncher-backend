@@ -3,7 +3,7 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { Teams } from './entities/team.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { UsersTeamsEvents } from 'src/users-team-event/entities/users-team-event.entity';
 
@@ -26,36 +26,49 @@ export class TeamsService {
 
     try {
 
-      const usuario = await this.userRepository.findOne({
-        where: {
-          user: { id: userId },
-          team: {
-            event: { id: eventId }
-          }
-        },
-        relations: ['user', 'team'] // Cargar relaciones necesarias
+      const usuario = await this.userRepository.find({
+        where: { user: { id: userId } },
+        relations: ['team'],
       });
 
+
       if (usuario) {
-        return {
-          ok: false,
-          error: 'USER_EVENT_CONFLICT'
-        };
+        const teamIds = usuario.map(user => user.team.id); 
+        const equiposEnEvento = await this.teamRepository.find({
+          where: {
+            id: In(teamIds), // Utiliza el operador "In" para verificar si el ID del equipo está en la lista de teamIds   
+          },
+          relations: ['event'],
+        });
+
+        if(equiposEnEvento){
+          const eventIds = equiposEnEvento.map(team => team.event.id);
+          if (eventIds.includes(eventId)){
+            return {
+              ok: false,
+              error: 'USER_EVENT_CONFLICT',
+            };
+          }
+        } 
       }
 
 
-      const findNameTeam = await this.teamRepository.findOne({
+      const findNameTeam = await this.teamRepository.find({
         where: {
-          name: name,
-          event: { id: eventId }
-        }
+          name: name
+        },
+        relations: ['event'],
       })
 
       if (findNameTeam) {
-        return {
-          ok: false,
-          error: 'EXISTING_TEAM',
-        };
+
+        const teamEventId = findNameTeam.map(team => team.event.id);
+        if (teamEventId.includes(eventId)){
+          return {
+            ok: false,
+            error: 'EXISTING_TEAM',
+          };
+        }      
       }
 
       const team = await this.teamRepository.save(newTeam)
@@ -106,7 +119,8 @@ export class TeamsService {
     try {
       const results = await this.teamRepository.find({
         where: {
-          event: {id}},
+          event: { id }
+        },
         order: {
           score: 'DESC',
         },
