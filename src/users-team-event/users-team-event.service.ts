@@ -16,60 +16,82 @@ export class UsersTeamEventService {
     @InjectRepository(Teams) private teamRepository: Repository<Teams>,
   ) { }
 
+
+  async countRecordsByTeamId(teamId: number): Promise<number> {
+    try {
+      const count = await this.userTeamEventRepository
+        .createQueryBuilder('usersTeamsEvents')
+        .where('usersTeamsEvents.teamId = :teamId', { teamId })
+        .getCount();
+  
+      return count;
+    } catch (error) {
+      // Manejo de errores
+      throw error;
+    }
+  }
+
   async createUTE(usersTeamEvent) {
 
-    const { teamId } = usersTeamEvent
+    try {
+      const { team, user } = usersTeamEvent
 
-    // 1. Obtiene el equipo asociado al evento
-    const team = await this.teamRepository.findOne({
-      where: {
-        id: teamId
-      },
-      relations: ['event'],
-    });
+      // 1. Obtiene el equipo asociado al evento
+      const teamData = await this.teamRepository.findOne({
+        where: {
+          id: team
+        },
+        relations: ['event'],
+      });
 
-    //2. Obtiene el número máximo de integrantes permitidos en el evento
-    const maxMembers = team.event.maxMembers;
-
-
-    // // 3. Cuenta cuántos miembros ya están registrados en el equipo para el evento
-    const currentMembersCount = await this.userTeamEventRepository.find({
-      where: {
-        team: { id: team.id }, // Proporciona un objeto que representa la entidad Teams
-      },
-    });
-    
-    const countMembers = currentMembersCount.length
-    
-    
-
-
-    //6. Verifica si el equipo está completo
-    if (countMembers >= maxMembers) {
-      return {
-        ok: false,
-        message: 'El equipo ya está completo para este evento.',
-      };
-    }
-
-    if(countMembers < maxMembers){
-      const newUTE = this.userTeamEventRepository.create(usersTeamEvent)
-      try {
-  
-        const UTE = await this.userTeamEventRepository.save(newUTE)
-  
-        return {
-          ok: true,
-          UTE
-        };
-  
-  
-      } catch (error) {
-        return error
+      if (!teamData) {
+        throw new Error('El equipo no fue encontrado');
       }
-    }
 
+      const existingUTE = await this.userTeamEventRepository.findOne({
+        where: {
+          user: { id: user },
+          team: { id: team },
+        },
+      });
+
+      if (existingUTE) {
+        return {
+          ok: false,
+          message: 'El usuario ya está registrado en este equipo para este evento.',
+        };
+      }
+
+      //2. Obtiene el número máximo de integrantes permitidos en el evento
+      const maxMembers = teamData.event.maxMembers;
+      const countMembers = await this.countRecordsByTeamId(teamData.id);
+      if (countMembers >= maxMembers) {
+        return {
+          ok: false,
+          message: 'El equipo ya está completo para este evento.',
+        };
+      }
+
+      if(countMembers < maxMembers){
+        const newUTE = this.userTeamEventRepository.create(usersTeamEvent)
+        try {
     
+          const UTE = await this.userTeamEventRepository.save(newUTE)
+    
+          return {
+            ok: true,
+            UTE
+          };
+    
+    
+        } catch (error) {
+          return error
+        }
+      }
+
+    } catch (error) {
+      throw error;
+    }
 
   }
 
