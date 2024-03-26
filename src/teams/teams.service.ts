@@ -22,7 +22,7 @@ export class TeamsService {
 
     const { name, userId } = team;
     const eventId = team['event'];
-    console.log('Id evento quiere unirse', eventId)
+ 
 
     const newTeam = this.teamRepository.create(team)
 
@@ -36,7 +36,7 @@ export class TeamsService {
 
       if (usuario) {
         const teamIds = usuario.map(user => user.team.id);
-        console.log('Ids equipo usuario inscrito',teamIds)
+
         const equiposEnEvento = await this.teamRepository.find({
           where: {
             id: In(teamIds), // Utiliza el operador "In" para verificar si el ID del equipo está en la lista de teamIds   
@@ -46,7 +46,7 @@ export class TeamsService {
 
         if(equiposEnEvento){
           const eventIds = equiposEnEvento.map(team => team.event.id);
-          console.log('Ids eventos equipo inscrito',eventIds)
+
           if (eventIds.includes(eventId)){
             return {
               ok: false,

@@ -507,25 +507,37 @@ export class UsersService {
         where: {
           user: { id: idUser },
         },
-        relations: ['user', 'team.event'] // Cargar relaciones necesarias
+        relations: ['user', 'team.event'], // Cargar relaciones necesarias
       });
-
-      if (usuario.length == 0) {
+  
+      if (usuario.length === 0) {
         return {
           ok: false,
-          msg: 'NO_EVENTS'
+          msg: 'NO_EVENTS',
         };
       }
-
-      const events = usuario.map(ute => ute.team.event)
-
-
-      return events
-
+  
+      const currentDate = new Date();
+  
+      const events = usuario.map(ute => {
+        const { id, name, slug, startAt, endsAt } = ute.team.event;
+        let status;
+  
+        if (startAt > currentDate) {
+          status = 'Próximamente';
+        } else if (startAt <= currentDate && endsAt >= currentDate) {
+          status = 'En curso';
+        } else {
+          status = 'Finalizado';
+        }
+  
+        return { id, name, slug, status };
+      });
+  
+      return events;
     } catch (error) {
-      return error
+      return error;
     }
-
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<Users> {

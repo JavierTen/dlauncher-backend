@@ -111,6 +111,7 @@ export class UsersController {
 
     return this.usersService.findUserEvents(idUser);
   }
+  
 
   @Get('evaluators')
   async findEvaluators() {
