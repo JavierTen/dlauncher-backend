@@ -195,11 +195,22 @@ export class TeamsService {
         },
         relations: ['event']
       })
+      const { event } = findTeam;
+      const currentDate = new Date();
+      const isBeforeCloseAt = currentDate < new Date(event.closeAt);
+     
 
       if (!findTeam) {
         return {
           ok: false,
           error: 'TEAM_DOES_NOT_EXIST',
+        };
+      }
+
+      if(!isBeforeCloseAt){
+        return {
+          ok: false,
+          error: 'CLOSED_REGISTRARTIONS',
         };
       }
 
@@ -212,8 +223,8 @@ export class TeamsService {
         relations: ['user'] // Cargar relaciones necesarias
       });
 
-      const seEncontro = usuario.some(item => item.user.id === userId);
-      if (seEncontro) {
+      const found = usuario.some(item => item.user.id === userId);
+      if (found) {
         return {
           ok: false,
           error: 'USER_EVENT_CONFLICT',
