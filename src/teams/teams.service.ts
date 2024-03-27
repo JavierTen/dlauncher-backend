@@ -294,7 +294,7 @@ export class TeamsService {
         eventSlug: usuario.team.event.slug,
         startDate: usuario.team.event.startAt,
         endDate: usuario.team.event.endsAt,
-        closeDate: usuario.team.event.endsAt,
+        closeDate: usuario.team.event.closeAt,
         rolUserTeam: usuario.rol,
         idTeam: usuario.team.id,
         nameTeam: usuario.team.name,
