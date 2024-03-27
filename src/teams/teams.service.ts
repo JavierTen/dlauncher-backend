@@ -154,6 +154,7 @@ export class TeamsService {
         where: {
           id: id
         },
+        relations: ['event']
       })
 
       const findMembers = await this.userRepository.find({
@@ -164,7 +165,7 @@ export class TeamsService {
       })
 
       const members = findMembers.map(members => members.user)
-
+      const { event, ...teamData } = findTeam;
 
       if (!findTeam) {
         return {
@@ -175,7 +176,9 @@ export class TeamsService {
 
       return {
         ok: true,
-        team: findTeam,
+        team: teamData,
+        idEvent: findTeam.event.id,
+        slugEvent: findTeam.event.slug,
         members
       };
 
@@ -288,6 +291,7 @@ export class TeamsService {
 
       const data = team.map(usuario => ({
         eventName: usuario.team.event.name,
+        eventSlug: usuario.team.event.slug,
         startDate: usuario.team.event.startAt,
         closeDate: usuario.team.event.endsAt,
         rolUserTeam: usuario.rol,
