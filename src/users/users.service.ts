@@ -509,6 +509,8 @@ export class UsersService {
         },
         relations: ['user', 'team.event'], // Cargar relaciones necesarias
       });
+
+    
   
       if (usuario.length === 0) {
         return {
@@ -521,6 +523,7 @@ export class UsersService {
   
       const events = usuario.map(ute => {
         const { id, name, slug, startAt, endsAt } = ute.team.event;
+        const team = ute.team['name']
         let status;
   
         if (startAt > currentDate) {
@@ -531,7 +534,7 @@ export class UsersService {
           status = 'Finalizado';
         }
   
-        return { id, name, slug, status };
+        return { id, name, slug, status, team };
       });
   
       return events;
