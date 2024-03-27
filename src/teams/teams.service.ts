@@ -98,7 +98,9 @@ export class TeamsService {
         where: {
           id: id
         },
+        relations: ['event'],
       })
+      const { event, ...teamWithoutEvent } = team;
 
       if (!team) {
         return {
@@ -109,7 +111,8 @@ export class TeamsService {
 
       return {
         ok: true,
-        team
+        team: teamWithoutEvent,
+        endEvent: team.event.endsAt
       };
 
 
