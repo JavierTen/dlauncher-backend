@@ -32,8 +32,8 @@ export class UsersTeamEventController {
     return this.usersTeamEventService.update(+id, updateUsersTeamEventDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersTeamEventService.remove(+id);
+  @Delete(':idUser/:idTeam')
+  remove(@Param('idUser') idUser: number, @Param('idTeam') idTeam: number) {
+    return this.usersTeamEventService.remove(idUser, idTeam);
   }
 }

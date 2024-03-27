@@ -107,16 +107,15 @@ export class UsersTeamEventService {
     return `This action updates a #${id} usersTeamEvent`;
   }
 
-  async remove(id: number) {
+  async remove(idUser: number, idTeam: number) {
 
     try {
       const removeUTE = await this.userTeamEventRepository.findOne({
         where: {
-          user: { id }
+          user: { id: idUser },
+          team: { id: idTeam }
         }
       })
-
-
 
       if (!removeUTE) {
         return {
