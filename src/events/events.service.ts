@@ -203,7 +203,7 @@ export class EventsService {
     event.closeAt = updateEventDto.closeAt;
     event.endsAt = updateEventDto.endsAt;
     event.closEvaluationAt = updateEventDto.closEvaluationAt;
-    event.ShortDescription = updateEventDto.shortDescription;
+    event.shortDescription = updateEventDto.shortDescription;
     event.description = updateEventDto.description;
     event.maxMembers = updateEventDto.maxMembers;
     event.post = updateEventDto.post;

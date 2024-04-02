@@ -29,7 +29,7 @@ export class Events {
     post: boolean; // Columna para indicar si el usuario está validado
 
     @Column('text')
-    ShortDescription: string;
+    shortDescription: string;
 
     @Column('text')
     description: string;
