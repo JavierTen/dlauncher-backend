@@ -19,11 +19,17 @@ export class Events {
     @Column({nullable: true, type: 'datetime' })
     closeAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
 
+    @Column({nullable: true, type: 'datetime' })
+    closEvaluationAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
+
     @Column({ type: 'int' })
     maxMembers: number; // Cantidad máxima de integrantes por equipo
 
     @Column()
     post: boolean; // Columna para indicar si el usuario está validado
+
+    @Column('text')
+    ShortDescription: string;
 
     @Column('text')
     description: string;

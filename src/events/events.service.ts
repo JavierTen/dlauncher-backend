@@ -50,7 +50,7 @@ export class EventsService {
           'event.startAt',
           'event.endsAt',
           'event.slug AS slug',
-          `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
+          `CONCAT(SUBSTRING(event.shortDescription, 1, 400), '...') AS shortDescription`,
           `CASE
             WHEN event.startAt > :currentDate THEN 'Próximamente'
             WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
@@ -80,7 +80,7 @@ export class EventsService {
           'event.endsAt',
           'event.post AS post',
           'event.slug AS slug',
-          `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
+          `CONCAT(SUBSTRING(event.shortDescription, 1, 400), '...') AS shortDescription`,
           `CASE
             WHEN event.startAt > :currentDate THEN 'Próximamente'
             WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
@@ -108,7 +108,7 @@ export class EventsService {
           'event.startAt',
           'event.endsAt',
           'event.slug AS slug',
-          `CONCAT(SUBSTRING(event.description, 1, 400), '...') AS description`,
+          `CONCAT(SUBSTRING(event.shortDescription, 1, 400), '...') AS shortDescription`,
           `CASE
             WHEN event.startAt > :currentDate THEN 'Próximamente'
             WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
@@ -202,6 +202,8 @@ export class EventsService {
     event.startAt = updateEventDto.startAt;
     event.closeAt = updateEventDto.closeAt;
     event.endsAt = updateEventDto.endsAt;
+    event.closEvaluationAt = updateEventDto.closEvaluationAt;
+    event.ShortDescription = updateEventDto.shortDescription;
     event.description = updateEventDto.description;
     event.maxMembers = updateEventDto.maxMembers;
     event.post = updateEventDto.post;

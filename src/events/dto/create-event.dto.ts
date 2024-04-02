@@ -14,11 +14,17 @@ export class CreateEventDto {
   @IsNotEmpty()
   closeAt: Date;
 
+  @IsNotEmpty()
+  closEvaluationAt: Date;
+
   @IsInt()
   maxMembers: number;
 
   @IsBoolean()
   post: boolean;
+
+  @IsString()
+  shortDescription: string;
 
   @IsString()
   description: string;
