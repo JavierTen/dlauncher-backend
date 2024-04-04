@@ -132,6 +132,7 @@ export class EventsService {
         where: {
           id: id
         },
+        relations: ['rubric'],
       })
 
       if (!findEvent) {
@@ -207,6 +208,7 @@ export class EventsService {
     event.description = updateEventDto.description;
     event.maxMembers = updateEventDto.maxMembers;
     event.post = updateEventDto.post;
+    event.rubric = updateEventDto.rubricId;
 
     const update = this.eventRepository.save(event);
 

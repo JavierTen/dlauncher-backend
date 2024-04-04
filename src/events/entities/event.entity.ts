@@ -1,5 +1,7 @@
+import { Rubric } from 'src/rubrics/entities/rubric.entity';
+import { RubricsSection } from 'src/rubrics_sections/entities/rubrics_section.entity';
 import { Users } from 'src/users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, ManyToMany, JoinTable, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
 
 
 @Entity()
@@ -36,6 +38,10 @@ export class Events {
 
     @Column('text')
     slug: string;
+
+    @ManyToOne(() => Rubric, { nullable: true }) // 
+    @JoinColumn({ name: 'rubricId' })
+    rubric: Rubric;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date; // Columna para almacenar la fecha y hora de creación, con valor por defecto actual

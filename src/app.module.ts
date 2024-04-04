@@ -16,6 +16,9 @@ import { MunicipalityModule } from './municipality/municipality.module';
 import { DocumentTypeModule } from './document-type/document-type.module';
 import { EventEvaluatorModule } from './event-evaluator/event-evaluator.module';
 import { EvaluatorQualificationModule } from './evaluator-qualification/evaluator-qualification.module';
+import { RubricsModule } from './rubrics/rubrics.module';
+import { RubricsSectionsModule } from './rubrics_sections/rubrics_sections.module';
+import { SectionsParametersModule } from './sections_parameters/sections_parameters.module';
 
 
 @Module({
@@ -38,6 +41,9 @@ import { EvaluatorQualificationModule } from './evaluator-qualification/evaluato
     DocumentTypeModule,
     EventEvaluatorModule,
     EvaluatorQualificationModule,
+    RubricsModule,
+    RubricsSectionsModule,
+    SectionsParametersModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

@@ -1,4 +1,5 @@
 import { IsString, IsDate, IsInt, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
+import { Rubric } from 'src/rubrics/entities/rubric.entity';
 
 export class CreateEventDto {
   @IsString()
@@ -17,7 +18,7 @@ export class CreateEventDto {
   @IsNotEmpty()
   closEvaluationAt: Date;
 
-  @IsInt()
+  @IsOptional()
   maxMembers: number;
 
   @IsBoolean()
@@ -31,6 +32,10 @@ export class CreateEventDto {
 
   @IsString()
   @IsOptional()
-  slug: string;
+  slug?: string;
+
+  @IsOptional()
+  @IsOptional()
+  rubricId?: Rubric; 
 }
 
