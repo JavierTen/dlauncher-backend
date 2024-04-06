@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSectionsParameterDto } from './dto/create-sections_parameter.dto';
 import { UpdateSectionsParameterDto } from './dto/update-sections_parameter.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SectionsParameter } from './entities/sections_parameter.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SectionsParametersService {
-  create(createSectionsParameterDto: CreateSectionsParameterDto) {
-    return 'This action adds a new sectionsParameter';
+
+  constructor(@InjectRepository(SectionsParameter) private parametersRepository: Repository<SectionsParameter>,
+  ) { }
+  async create(createParameter: CreateSectionsParameterDto) {
+    try {
+      const section = this.parametersRepository.create(createParameter);
+      return await this.parametersRepository.save(section);
+    } catch (error) {
+      throw error;
+    }
   }
 
   findAll() {
