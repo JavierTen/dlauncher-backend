@@ -6,7 +6,7 @@ import { RubricsSection } from "src/rubrics_sections/entities/rubrics_section.en
 export class CreateSectionsParameterDto {
 
     @IsNumber({maxDecimalPlaces: 2})
-    @Min(0.01)
+    @Min(0.00)
     @Max(99999999.99)
     value: number;
 
