@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
-import  htmlPdf from 'html-pdf';
+const pdf = require('html-pdf');
 import { Response } from 'express';
 import { Events } from 'src/events/entities/event.entity';
 import { Users } from 'src/users/entities/user.entity';
@@ -198,7 +198,7 @@ export class CertificatesService {
         border: '0'
       };
 
-      htmlPdf.create(htmlContent, config ).toBuffer((err, buffer) => {
+      pdf.create(htmlContent, config ).toBuffer((err, buffer) => {
         if (err) {
           reject(err);
         } else {
