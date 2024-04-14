@@ -171,8 +171,8 @@ export class UsersController {
   // }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string) {
-    const deleted = await this.usersService.deleteUserById(+id);
+  async deleteUser(@Param('id') id: number) {
+    const deleted = await this.usersService.deleteUserById(id);
 
     if (!deleted) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado.`);

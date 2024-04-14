@@ -22,7 +22,7 @@ export class TeamsService {
 
     const { name, userId } = team;
     const eventId = team['event'];
- 
+
 
     const newTeam = this.teamRepository.create(team)
 
@@ -44,16 +44,16 @@ export class TeamsService {
           relations: ['event'],
         });
 
-        if(equiposEnEvento){
+        if (equiposEnEvento) {
           const eventIds = equiposEnEvento.map(team => team.event.id);
 
-          if (eventIds.includes(eventId)){
+          if (eventIds.includes(eventId)) {
             return {
               ok: false,
               error: 'USER_EVENT_CONFLICT',
             };
           }
-        } 
+        }
       }
 
 
@@ -67,12 +67,12 @@ export class TeamsService {
       if (findNameTeam) {
 
         const teamEventId = findNameTeam.map(team => team.event.id);
-        if (teamEventId.includes(eventId)){
+        if (teamEventId.includes(eventId)) {
           return {
             ok: false,
             error: 'EXISTING_TEAM',
           };
-        }      
+        }
       }
 
       const team = await this.teamRepository.save(newTeam)
@@ -160,16 +160,6 @@ export class TeamsService {
         relations: ['event']
       })
 
-      const findMembers = await this.userRepository.find({
-        where: {
-          team: { id }
-        },
-        relations: ['user']
-      })
-
-      const members = findMembers.map(members => members.user)
-      const { event, ...teamData } = findTeam;
-
       if (!findTeam) {
         return {
           ok: false,
@@ -177,12 +167,49 @@ export class TeamsService {
         };
       }
 
+      const findMembers = await this.userRepository.find({
+        where: {
+          team: { id }
+        },
+        relations: ['user']
+      })
+      console.log('------------------')
+      const maxMembers = findTeam.event.maxMembers
+      console.log(findTeam.event.id)
+      const closeEvaluation = findTeam.event.closEvaluationAt
+      const closeEvent = findTeam.event.endsAt
+      const members = findMembers.map(members => members.user)
+      const { event, ...teamData } = findTeam;
+
+      function validarFechas(closeEvent: Date, closeEvaluation: Date): boolean {
+        // Convertir las cadenas de fecha a objetos de fecha
+        const fechaActual = new Date();
+        const fechaCierreEvento = new Date(closeEvent);
+        const fechaCierreEvaluacion = new Date(closeEvaluation);
+
+
+        console.log(fechaActual)
+        console.log(fechaCierreEvento)
+        console.log(fechaCierreEvaluacion)
+        // Comparar si la fecha actual está entre closeEvent y closeEvaluation
+        return fechaActual > fechaCierreEvento && fechaActual < fechaCierreEvaluacion;
+      }
+
+      const result = validarFechas(closeEvent, closeEvaluation);
+
+      console.log(result)
+
+
+
+
       return {
         ok: true,
         team: teamData,
         idEvent: findTeam.event.id,
         slugEvent: findTeam.event.slug,
-        members
+        members,
+        maxMembers,
+        assess: result
       };
 
 
@@ -204,7 +231,7 @@ export class TeamsService {
       const { event } = findTeam;
       const currentDate = new Date();
       const isBeforeCloseAt = currentDate < new Date(event.closeAt);
-     
+
 
       if (!findTeam) {
         return {
@@ -213,7 +240,7 @@ export class TeamsService {
         };
       }
 
-      if(!isBeforeCloseAt){
+      if (!isBeforeCloseAt) {
         return {
           ok: false,
           error: 'CLOSED_REGISTRARTIONS',
@@ -255,20 +282,33 @@ export class TeamsService {
 
     try {
 
-      const findTeam = await this.teamRepository.find({
+      const teams = await this.teamRepository.find({
         where: {
           event: {
             id: id
           }
-        }
+        },
+        relations: ['usersTeamsEvents', 'event']
       })
 
+      const teamsWithMembersCount = teams.map(team => ({
+        ...team,
+        membersCount: team.usersTeamsEvents.length
+      }));
+
+      const teamsWithoutMembersData = teamsWithMembersCount.map(({ usersTeamsEvents, ...rest }) => rest);
+      const maxMembers = teams.length > 0 ? teams[0].event.maxMembers : 0;
+      const teamsWithoutEventData = teamsWithoutMembersData.map(({ event, ...rest }) => rest);
 
 
+
+
+      console.log(teams)
 
       return {
         ok: true,
-        data: findTeam
+        teams: teamsWithoutEventData,
+        maxMembers
       };
 
 
@@ -289,25 +329,90 @@ export class TeamsService {
         relations: ['team.event']
       })
 
+      const datateam = findTeam.filter(data => data.team.event.id === eventId);
 
-      const team = findTeam.filter(usuario => usuario.team.event.id === eventId);
-
-      const data = team.map(usuario => ({
-        eventName: usuario.team.event.name,
-        eventSlug: usuario.team.event.slug,
-        startDate: usuario.team.event.startAt,
-        endDate: usuario.team.event.endsAt,
-        closeDate: usuario.team.event.closeAt,
-        rolUserTeam: usuario.rol,
-        idTeam: usuario.team.id,
-        nameTeam: usuario.team.name,
-        tokenTeam: usuario.team.token,
-        idEvent: usuario.team.event.id
+      const data = datateam.map(data => ({
+        eventName: data.team.event.name,
+        eventSlug: data.team.event.slug,
+        startDate: data.team.event.startAt,
+        endDate: data.team.event.endsAt,
+        closeDate: data.team.event.closeAt,
+        closeEvaluation: data.team.event.closEvaluationAt,
+        rolUserTeam: data.rol,
+        idTeam: data.team.id,
+        nameTeam: data.team.name,
+        tokenTeam: data.team.token,
+        idEvent: data.team.event.id,
+        document: data.team.event.documentUrl,
+        score: data.team.score,
+        github: data.team.github,
+        youtube: data.team.youtube,
+        participated: (data.team.github !== null && data.team.youtube !== null) && data.team.score !== 0
       }));
+      console.log('------------------')
+      const idTeam = data[0].idTeam;
+      const endDate = data[0].endDate;
+      const closeEvaluation = data[0].closeEvaluation;
+      console.log(data[0].idEvent)
+      console.log(idTeam)
+      function validarFechas(endDate: Date, closeEvaluation: Date): boolean {
+        // Convertir las cadenas de fecha a objetos de fecha
+        const fechaActual = new Date();
+        const fechaCierreEvento = new Date(endDate);
+        const fechaCierreEvaluacion = new Date(closeEvaluation);
+
+        console.log(fechaActual)
+        console.log(fechaCierreEvento)
+        console.log(fechaCierreEvaluacion)
+
+
+        // Comparar si la fecha actual está entre closeEvent y closeEvaluation
+        return fechaActual > fechaCierreEvento && fechaActual < fechaCierreEvaluacion;
+      }
+
+      const result = validarFechas(endDate, closeEvaluation);
+      let win: boolean;
+      if (!result) {
+        const findTeam = await this.teamsRepository.find({
+          where: {
+            event: { id: eventId }
+          },
+          order: {
+            score: "DESC"
+          }
+        })
+        
+
+        if (findTeam.length > 0) {
+          // Obtenemos la puntuación más alta
+          const highestScore = findTeam[0].score;
+
+          // Filtramos los equipos con la puntuación más alta
+          const highestScoringTeams = findTeam.filter(team => team.score === highestScore);
+
+          // Obtenemos los IDs de los equipos con la puntuación más alta
+          const highestScoringTeamIds = highestScoringTeams.map(team => team.id);
+
+          // Eliminamos los equipos que no tienen la puntuación más alta
+          const remainingTeams = findTeam.filter(team => highestScoringTeamIds.includes(team.id));
+
+          // Ahora `remainingTeams` contiene solo los equipos con la puntuación más alta
+          console.log(remainingTeams);
+
+          const specificTeam = remainingTeams.find(team => team.id === idTeam);
+          
+          if (specificTeam) {
+             win = true
+          } else {
+           win = false
+          }
+        } 
+      }
 
       return {
         ok: true,
-        data
+        data,
+        win
       };
 
 

@@ -155,12 +155,71 @@ export class EventsService {
 
   }
 
+  async findEventRubric(id: number) {
+    try {
+      const findEvent = await this.eventRepository.findOne({
+        where: {
+          id: id
+        },
+        relations: ['rubric'],
+      })
+
+      if (!findEvent) {
+        return {
+          ok: false,
+          error: 'EVENT_DOES_NOT_EXIST',
+        };
+      }
+
+      const rubricId = findEvent.rubric.id;
+
+      return {
+        ok: true,
+        rubric: rubricId
+      };
+
+
+
+    } catch (error) {
+      return error
+    }
+
+  }
+
   async findOneBySlug(slug: string) {
     try {
       const findEvent = await this.eventRepository.findOne({
         where: {
           slug: slug,
           post: true
+        },
+      })
+
+      if (!findEvent) {
+        return {
+          ok: false,
+          error: 'EVENT_DOES_NOT_EXIST',
+        };
+      }
+
+      return {
+        ok: true,
+        event: findEvent
+      };
+
+
+
+    } catch (error) {
+      return error
+    }
+
+  }
+
+  async findOneBySlugAdmin(slug: string) {
+    try {
+      const findEvent = await this.eventRepository.findOne({
+        where: {
+          slug: slug
         },
       })
 
@@ -208,16 +267,37 @@ export class EventsService {
     event.description = updateEventDto.description;
     event.maxMembers = updateEventDto.maxMembers;
     event.post = updateEventDto.post;
-    event.rubric = updateEventDto.rubricId;
+    event.rubric = updateEventDto.rubric;
+    event.organizerName = updateEventDto.organizerName;
+    event.organizerMail = updateEventDto.organizerMail;
+    event.documentUrl = updateEventDto.documentUrl;
+
 
     const update = this.eventRepository.save(event);
 
     return {
       ok: true,
-      event
+      event: update
     }
 
   }
+
+  async remove(id: number) {
+    const event = await this.eventRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!event) {
+      return false; // El usuario no existe
+    }
+
+    await this.eventRepository.remove(event);
+    return true; // Usuario eliminado con éxito
+  }
+
+  //-------------GENERAR SLUG
 
   async generateSlug(text: string): Promise<string> {
     // Reemplazar caracteres especiales y espacios con guiones
@@ -247,7 +327,5 @@ export class EventsService {
     return slug;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
-  }
+  
 }

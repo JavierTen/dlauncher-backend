@@ -1,5 +1,5 @@
 import { RubricsSection } from "src/rubrics_sections/entities/rubrics_section.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class SectionsParameter {
@@ -13,9 +13,10 @@ export class SectionsParameter {
     @Column('text')
     description: string;
 
-    @ManyToOne(() => RubricsSection, rubricsSection => rubricsSection.parameters)
+    @ManyToOne(() => RubricsSection, rubricsSection => rubricsSection.parameters, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'rubricsSectionId' })
     rubricsSection: RubricsSection;
-  
+
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date; // Columna para almacenar la fecha y hora de creación, con valor por defecto actual
 

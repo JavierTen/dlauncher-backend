@@ -38,8 +38,33 @@ export class RubricsService {
     return await this.rubricRepository.save(rubric);
   }
   
-  findAll() {
-    return `This action returns all rubrics`;
+  async findAll() {
+    try {
+      const rubrics = await this.rubricRepository.find({ 
+        order: {
+          id: 'DESC', // Ordenar por la columna 'id' en orden descendente
+        }           
+      })
+
+     
+
+      if (rubrics.length == 0) {
+        return {
+          ok: false,
+          error: 'NO_RUBRICS',
+        };
+      }
+
+      return {
+        ok: true,
+        rubrics
+      };
+
+
+
+    } catch (error) {
+      return error
+    }
   }
 
   findOne(id: number) {
@@ -76,13 +101,29 @@ export class RubricsService {
   }
 
 
-  async update(slug: string, updateRubric: UpdateRubricDto) {
+  async update(id: number, updateRubric: UpdateRubricDto) {
     const rubric = await this.rubricRepository.findOne({
       where: {
-        slug: slug
+        id: id
       }
     });
 
+    const name = await this.rubricRepository.findOne({
+      where: {
+        name: updateRubric.name
+      }
+    });
+
+    if(name != null){
+      if (name.id != id) {
+        throw new HttpException({
+          ok: false,
+          error: 'NAME_CONFLICT'
+        }, HttpStatus.CONFLICT);
+      }
+    }
+
+    
 
     if (!rubric) {
       throw new NotFoundException('Rubrica no encontrada');

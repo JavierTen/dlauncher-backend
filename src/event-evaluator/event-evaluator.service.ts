@@ -66,6 +66,7 @@ export class EventEvaluatorService {
         };
       }
 
+
       return {
         ok: true,
         event: evaluators
@@ -80,7 +81,7 @@ export class EventEvaluatorService {
 
   async findEventsEvaluator(id: number) {
     try {
-      const events = await this.evaluatorRepository.find({
+      const eventsEvaluator = await this.evaluatorRepository.find({
         where: {
           user: {
             id: id
@@ -89,21 +90,44 @@ export class EventEvaluatorService {
       })
   
       // Utiliza el método map para extraer solo los objetos 'event'.
-      const eventObjects = events.map(item => item.event);
+      const eventObjects = eventsEvaluator.map(item => item.event);
   
       // Utiliza el método filter para eliminar elementos 'undefined'.
-      const data = eventObjects.filter(event => event !== undefined);
+      const events = eventObjects.filter(event => event !== undefined);
+
+      
+      /*const event = data.map( data => {
+
+      })*/
   
-      if (data.length === 0) {
+      if (events.length === 0) {
         return {
           ok: false,
           error: 'EVENT_DOES_NOT_EXIST',
         };
       }
+
+      const eventsE = events.map(event => {
+        const { id, name, slug ,startAt, endsAt } = event;
+        const currentDate = new Date();
+    
+        let status;
+    
+        if (new Date(startAt) > currentDate) {
+            status = 'Próximamente';
+        } else if (new Date(startAt) <= currentDate && new Date(endsAt) >= currentDate) {
+            status = 'En curso';
+        } else {
+            status = 'Finalizado';
+        }
+    
+        return { id, name, slug, status, startAt  };
+    });
+
       
       return {
         ok: true,
-        data
+        events: eventsE
       };
     } catch (error) {
       return error;

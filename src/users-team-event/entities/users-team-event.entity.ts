@@ -10,13 +10,13 @@ export class UsersTeamsEvents {
     @Column({ default: false })
     rol: boolean; // Columna de clave primaria generada automáticamente
 
-    @ManyToOne(() => Users) // Establece la relación muchos a uno con la entidad Usuarios
-    @JoinColumn({ name: 'userId' }) // Nombre de la columna en la tabla RegistroEquipos que guarda la FK
-    user: Users; // Nombre de la propiedad en la entidad RegistroEquipos para acceder al usuario relacionado
-
-    @ManyToOne(() => Teams) // Establece la relación muchos a uno con la entidad Equipos
-    @JoinColumn({ name: 'teamId' }) // Nombre de la columna en la tabla RegistroEquipos que guarda la FK
-    team: Teams; // Nombre de la propiedad en la entidad RegistroEquipos para acceder al equipo relacionado
+    @ManyToOne(() => Users, { onDelete: 'CASCADE' }) // Agrega { onDelete: 'CASCADE' } aquí
+    @JoinColumn({ name: 'userId' })
+    user: Users;
+  
+    @ManyToOne(() => Teams, { onDelete: 'CASCADE' }) // Agrega { onDelete: 'CASCADE' } aquí
+    @JoinColumn({ name: 'teamId' })
+    team: Teams;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date

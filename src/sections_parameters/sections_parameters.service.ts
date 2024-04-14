@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSectionsParameterDto } from './dto/create-sections_parameter.dto';
 import { UpdateSectionsParameterDto } from './dto/update-sections_parameter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,11 +27,43 @@ export class SectionsParametersService {
     return `This action returns a #${id} sectionsParameter`;
   }
 
-  update(id: number, updateSectionsParameterDto: UpdateSectionsParameterDto) {
-    return `This action updates a #${id} sectionsParameter`;
+  async update(id: number, updateSectionsParameterDto: UpdateSectionsParameterDto) {
+
+    try {
+      const parameter = await this.parametersRepository.findOne({
+        where: {
+          id: id
+        }
+      });
+
+      if (!parameter) {
+        throw new NotFoundException(`Parametro con ID ${id} no encontrado`);
+      }
+  
+      Object.assign(parameter, updateSectionsParameterDto);
+
+      await this.parametersRepository.save(parameter);
+
+      return parameter;
+
+    } catch (error) {
+      throw error
+    }
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sectionsParameter`;
+  async remove(id: number) {
+    const parameter = await this.parametersRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!parameter) {
+      return false; // El usuario no existe
+    }
+
+    await this.parametersRepository.remove(parameter);
+    return true; // Usuario eliminado con éxito
   }
 }

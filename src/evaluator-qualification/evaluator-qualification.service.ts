@@ -20,21 +20,14 @@ export class EvaluatorQualificationService {
 
 
   async create(qualificationEval) {
-    try {
-      const data = {
-        team: qualificationEval.teamId,
-        user: qualificationEval.userId,
-        score: qualificationEval.score,
-        event: qualificationEval.eventId
-      }
-
-
-      await this.updateScore(qualificationEval.team, qualificationEval)
+    try {          
       const newQualification = this.qualificationRepository.create(qualificationEval)
       const qualification = await this.qualificationRepository.save(newQualification)
+      const update = await this.updateScore(qualificationEval.team, qualificationEval.event ,qualificationEval)
       return {
         ok: true,
-        qualification
+        qualification,
+        scoreTeam: update
       }
     } catch (error) {
       return error
@@ -42,23 +35,22 @@ export class EvaluatorQualificationService {
 
   }
 
-  async updateScore(id: number, updateTeamDto: UpdateTeamDto) {
+  async updateScore(idTeam: number, IdEvent:number ,updateTeamDto: UpdateTeamDto) {
     try {
-      console.log(updateTeamDto.event)
-
-      const event = await this.eventEvaluatorRepository.find({
+     
+      const evaluates = await this.qualificationRepository.find({   
         where: {
-          event: { id: updateTeamDto.event }
-        },
+          team: {id: idTeam},
+          event: {id: IdEvent}
+        }
       });
-      console.log("numbers evaluators: ", event.length)
-      if (!event) {
-        throw new NotFoundException('Evento no encontrado');
-      }
+
+      const score = evaluates.reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
+      const totalScore = score / evaluates.length;
 
       const team = await this.teamRepository.findOne({
         where: {
-          id: id
+          id: idTeam
         }
       });
 
@@ -66,16 +58,13 @@ export class EvaluatorQualificationService {
         throw new NotFoundException('Equipo no encontrado');
       }
 
-      if (updateTeamDto.score) {
-        const factor = 1 / event.length;
-        const nota = updateTeamDto.score * factor;
-        team.score += nota;
+      if (updateTeamDto.score) { 
+        team.score = totalScore;
       }
 
-      const update = this.teamRepository.save(team);
+      this.teamRepository.save(team);
       return {
-        ok: true,
-        update
+        totalScore
       }
 
     } catch (error) {

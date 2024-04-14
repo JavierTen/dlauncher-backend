@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, NotFoundException } from '@nestjs/common';
 import { RubricsService } from './rubrics.service';
 import { CreateRubricDto } from './dto/create-rubric.dto';
 import { UpdateRubricDto } from './dto/update-rubric.dto';
@@ -27,13 +27,19 @@ export class RubricsController {
     return this.rubricsService.findOne(+id);
   }*/
 
-  @Put(':slug')
-  update(@Param('slug') slug: string, @Body() updateRubricDto: UpdateRubricDto) {
-    return this.rubricsService.update(slug, updateRubricDto);
+  @Put(':id')
+  update(@Param('id') id: number, @Body() updateRubricDto: UpdateRubricDto) {
+    return this.rubricsService.update(id, updateRubricDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.rubricsService.remove(id);
+  async remove(@Param('id') id: number) {
+    const deleted = await this.rubricsService.remove(id);
+
+    if (!deleted) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado.`);
+    }
+
+    return { message: `Usuario con ID ${id} eliminado correctamente.` };
   }
 }

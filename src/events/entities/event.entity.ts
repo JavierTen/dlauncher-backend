@@ -18,10 +18,10 @@ export class Events {
     @Column({ type: 'datetime' })
     endsAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
 
-    @Column({nullable: true, type: 'datetime' })
+    @Column({ nullable: true, type: 'datetime' })
     closeAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
 
-    @Column({nullable: true, type: 'datetime' })
+    @Column({ nullable: true, type: 'datetime' })
     closEvaluationAt: Date; // Columna para almacenar la fecha y hora de finalización del evento
 
     @Column({ type: 'int' })
@@ -36,10 +36,19 @@ export class Events {
     @Column('text')
     description: string;
 
+    @Column({ nullable: true, type: 'text' })
+    documentUrl: string
+
     @Column('text')
     slug: string;
 
-    @ManyToOne(() => Rubric, { nullable: true }) // 
+    @Column({ nullable: true, type: 'text' })
+    organizerName: string
+
+    @Column({ nullable: true, type: 'text' })
+    organizerMail: string
+
+    @ManyToOne(() => Rubric, { nullable: true, onDelete: 'SET NULL' }) // Agrega { onDelete: 'SET NULL' } aquí
     @JoinColumn({ name: 'rubricId' })
     rubric: Rubric;
 
@@ -49,6 +58,6 @@ export class Events {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // Columna para almacenar la fecha y hora de actualización automáticamente
 
-    
+
 }
 

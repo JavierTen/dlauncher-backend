@@ -32,7 +32,7 @@ export class Teams {
     this.token = this.generateRandomToken(6); // Cambia la longitud si es necesario
   }
 
-  @Column({ type: 'double precision', default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   score: number;
 
   @Column({ type: 'text', nullable: true })
@@ -47,8 +47,8 @@ export class Teams {
   @Column({ type: 'text', nullable: true })
   github: string;
 
-  @ManyToOne(() => Events) // Establece la relación muchos a uno con la entidad Eventos
-  @JoinColumn({ name: 'eventId' }) // Nombre de la columna en la tabla Equipos que guarda la FK
+  @ManyToOne(() => Events, { onDelete: 'CASCADE' }) // Agrega { onDelete: 'CASCADE' } aquí
+  @JoinColumn({ name: 'eventId' })
   event: Events;
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })

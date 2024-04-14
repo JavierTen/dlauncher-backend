@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRubricsSectionDto } from './dto/create-rubrics_section.dto';
 import { UpdateRubricsSectionDto } from './dto/update-rubrics_section.dto';
 import { Repository } from 'typeorm';
@@ -61,12 +61,42 @@ export class RubricsSectionsService {
     return `This action returns a #${id} rubricsSection`;
   }
 
-  update(id: number, updateRubricsSectionDto: UpdateRubricsSectionDto) {
-    return `This action updates a #${id} rubricsSection`;
+  async update(id: number, updateRubricsSectionDto: UpdateRubricsSectionDto) {
+    try {
+      const section = await this.sectionRepository.findOne({
+        where: {
+          id: id
+        }
+      });
+
+      if (!section) {
+        throw new NotFoundException(`Sección con ID ${id} no encontrada`);
+      }
+  
+      Object.assign(section, updateRubricsSectionDto);
+
+      await this.sectionRepository.save(section);
+
+      return section;
+
+    } catch (error) {
+      throw error
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} rubricsSection`;
+  async remove(id: number) {
+    const section = await this.sectionRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!section) {
+      return false; // El usuario no existe
+    }
+
+    await this.sectionRepository.remove(section);
+    return true; // Usuario eliminado con éxito
   }
 }
 

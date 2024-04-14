@@ -1,10 +1,10 @@
 
 import { Rubric } from "src/rubrics/entities/rubric.entity";
 import { SectionsParameter } from "src/sections_parameters/entities/sections_parameter.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, BaseEntity } from "typeorm";
 
 @Entity()
-export class RubricsSection {
+export class RubricsSection extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number; // Columna de clave primaria generada automáticamente
@@ -12,7 +12,7 @@ export class RubricsSection {
     @Column()
     name: string; // Columna para almacenar el nombre del evento, debe ser único
 
-    @ManyToOne(() => Rubric, rubric => rubric.sections)
+    @ManyToOne(() => Rubric, rubric => rubric.sections, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'rubricId' })
     rubric: Rubric;
 
@@ -22,7 +22,7 @@ export class RubricsSection {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date; // Columna para almacenar la fecha y hora de actualización automáticamente
 
-    @OneToMany(() => SectionsParameter, sectionParameter => sectionParameter.rubricsSection)
+    @OneToMany(() => SectionsParameter, sectionParameter => sectionParameter.rubricsSection, { cascade: true, onDelete: 'CASCADE' })
     parameters: SectionsParameter[];
 
 }

@@ -8,17 +8,17 @@ export class EvaluatorQualification {
     @PrimaryGeneratedColumn()
     id: number; // Columna de clave primaria generada automáticamente
 
-    @ManyToOne(() => Teams, { eager: true }) // Establece la relación muchos a uno con la entidad Eventos
-    @JoinColumn({ name: 'teamId' }) // Nombre de la columna en la tabla Equipos que guarda la FK
+    @ManyToOne(() => Teams, { eager: true, onDelete: 'CASCADE' }) // Agrega { onDelete: 'CASCADE' } aquí
+    @JoinColumn({ name: 'teamId' })
     team: Teams;
 
-    @ManyToOne(() => Users, { eager: true }) // Establece la relación muchos a uno con la entidad Usuarios
-    @JoinColumn({ name: 'userId' }) // Nombre de la columna en la tabla RegistroEquipos que guarda la FK
-    user: Users; // Nombre de la propiedad en la entidad RegistroEquipos para acceder al usuario relacionado
+    @ManyToOne(() => Users, { eager: true, onDelete: 'CASCADE' }) // Agrega { onDelete: 'CASCADE' } aquí
+    @JoinColumn({ name: 'userId' })
+    user: Users;
 
-    @ManyToOne(() => Events, { eager: true }) // Establece la relación muchos a uno con la entidad Usuarios
-    @JoinColumn({ name: 'eventId' }) // Nombre de la columna en la tabla RegistroEquipos que guarda la FK
-    event: Events; // Nombre de la propiedad en la entidad RegistroEquipos para acceder al usuario relacionado
+    @ManyToOne(() => Events, { eager: true, onDelete: 'CASCADE' }) // Agrega { onDelete: 'CASCADE' } aquí
+    @JoinColumn({ name: 'eventId' })
+    event: Events;
 
     @Column({ type: 'double precision' })
     score: number;

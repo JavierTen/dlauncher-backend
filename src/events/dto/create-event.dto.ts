@@ -30,12 +30,24 @@ export class CreateEventDto {
   @IsString()
   description: string;
 
+  @IsOptional()
+  @IsString()
+  documentUrl?: string
+
+  @IsOptional()
+  @IsString()
+  organizerName?: string
+
+  @IsOptional()
+  @IsString()
+  organizerMail?: string
+
   @IsString()
   @IsOptional()
   slug?: string;
 
   @IsOptional()
   @IsOptional()
-  rubricId?: Rubric; 
+  rubric?: Rubric; 
 }
 

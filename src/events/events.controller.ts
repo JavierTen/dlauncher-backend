@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, NotFoundException } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -42,18 +42,34 @@ export class EventsController {
     return this.eventsService.findOne(id);  
   }
 
+  @Get(':id/rubric') 
+  findEventRubric(@Param('id') id: number) { 
+    return this.eventsService.findEventRubric(id);  
+  }
+
   @Get('slug/:slug') 
   findOneBySlug(@Param('slug') slug: string) { 
     return this.eventsService.findOneBySlug(slug);  
   }
 
+  @Get('admin/slug/:slug') 
+  findOneBySlugAdmin(@Param('slug') slug: string) { 
+    return this.eventsService.findOneBySlugAdmin(slug);  
+  }
+
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
+  update(@Param('id') id: number, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(+id, updateEventDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventsService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const deleted = await this.eventsService.remove(id);
+
+    if (!deleted) {
+      throw new NotFoundException(`sección  no encontrada.`);
+    }
+
+    return { message: `sección  eliminada correctamente.` };
   }
 }

@@ -19,6 +19,7 @@ import { EvaluatorQualificationModule } from './evaluator-qualification/evaluato
 import { RubricsModule } from './rubrics/rubrics.module';
 import { RubricsSectionsModule } from './rubrics_sections/rubrics_sections.module';
 import { SectionsParametersModule } from './sections_parameters/sections_parameters.module';
+import { CertificatesModule } from './certificates/certificates.module';
 
 
 @Module({
@@ -44,6 +45,7 @@ import { SectionsParametersModule } from './sections_parameters/sections_paramet
     RubricsModule,
     RubricsSectionsModule,
     SectionsParametersModule,
+    CertificatesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],
