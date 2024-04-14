@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
-import * as PDFDocument from 'pdfkit';
 import * as htmlPdf from 'html-pdf';
 import { Response } from 'express';
 import { Events } from 'src/events/entities/event.entity';
@@ -191,14 +190,15 @@ export class CertificatesService {
     return new Promise<Buffer>((resolve, reject) => {
       const customWidth = '430mm'; // Ejemplo: '210mm' o '8.3in' o '595px'
         const customHeight = '243.5mm'; // Ejemplo: '297mm' o '11.7in' o '842px'
-      const options = {
+        const customOrientation = "landscape"
+      const config  = {
         width: customWidth,
         height: customHeight,
-        orientation: 'landscape',
+        orientation: "landscape" as "landscape",
         border: '0'
       };
 
-      htmlPdf.create(htmlContent, options).toBuffer((err, buffer) => {
+      htmlPdf.create(htmlContent, config ).toBuffer((err, buffer) => {
         if (err) {
           reject(err);
         } else {
