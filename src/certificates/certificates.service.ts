@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCertificateDto } from './dto/create-certificate.dto';
-import { UpdateCertificateDto } from './dto/update-certificate.dto';
-const pdf = require('html-pdf');
-import puppeteer from 'puppeteer';
+
+import * as pdf from 'html-pdf';
+
 import { Response } from 'express';
 import { Events } from 'src/events/entities/event.entity';
 import { Users } from 'src/users/entities/user.entity';
