@@ -176,11 +176,13 @@ export class CertificatesService {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', 'attachment; filename=certificado-asistencia.pdf');
 
+      await new Promise(resolve => setTimeout(resolve, 2000)); 
       // Envía el PDF como respuesta
       res.send(pdfBuffer);
 
     } catch (error) {
-
+        console.error('Error generando el certificado:', error);
+        res.status(500).send('Error generando el certificado');
     }
 
 
