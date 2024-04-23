@@ -18,7 +18,7 @@ async function bootstrap() {
       cert: fs.readFileSync(STAR, 'utf8'),
     };
     const app = await NestFactory.create(AppModule, {
-      httpsOptions,});
+      httpsOptions});
       app.enableCors({
         allowedHeaders: '*',
         origin: '*',
@@ -27,8 +27,9 @@ async function bootstrap() {
       app.setGlobalPrefix('api');
       app.useGlobalPipes(new ValidationPipe())
       const configService = app.get(ConfigService)
-      await app.listen(configService.get('PORT'));
+      const server = await app.listen(configService.get('PORT'));
     // Continúa con el procesamiento del archivo.
+      server.setTimeout(60000); 
   } else {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService)
