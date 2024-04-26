@@ -528,13 +528,15 @@ export class UsersService {
         let status;
         startAt.setHours(startAt.getHours() - 5);
         endsAt.setHours(endsAt.getHours() - 5);
+        console.log('-------------------------------------')
         console.log('Hora actual: ',currentDate)
+        console.log('Hora inicio evento: ',startAt)
         console.log('Hora fin evento: ',endsAt)
         if (startAt > currentDate) {
           status = 'Próximamente';
-        } else if (startAt <= currentDate && endsAt >= currentDate) {
+        } else if (currentDate >= startAt  &&  currentDate <= endsAt  ) {
           status = 'En curso';
-        } else {
+        } else if (currentDate >= endsAt) {
           status = 'Finalizado';
         }
   
