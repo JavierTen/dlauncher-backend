@@ -526,8 +526,6 @@ export class UsersService {
         const { id, name, slug, startAt, endsAt } = ute.team.event;
         const team = ute.team['name']
         let status;
-        startAt.setHours(startAt.getHours() - 5);
-        endsAt.setHours(endsAt.getHours() - 5);
         console.log('-------------------------------------')
         console.log('Hora actual: ',currentDate)
         console.log('Hora inicio evento: ',startAt)
