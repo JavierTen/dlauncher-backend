@@ -520,12 +520,16 @@ export class UsersService {
       }
   
       const currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 5);
   
       const events = usuario.map(ute => {
         const { id, name, slug, startAt, endsAt } = ute.team.event;
         const team = ute.team['name']
         let status;
-  
+        startAt.setHours(startAt.getHours() - 5);
+        endsAt.setHours(endsAt.getHours() - 5);
+        console.log('Hora actual: ',currentDate)
+        console.log('Hora fin evento: ',endsAt)
         if (startAt > currentDate) {
           status = 'Próximamente';
         } else if (startAt <= currentDate && endsAt >= currentDate) {

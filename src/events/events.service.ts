@@ -244,7 +244,7 @@ export class EventsService {
   }
 
   async countEvents(): Promise<number> {
-    return this.eventRepository.count();
+    return this.eventRepository.count({ where: { post: true } });
   }
 
   async update(id: number, updateEventDto: UpdateEventDto) {
