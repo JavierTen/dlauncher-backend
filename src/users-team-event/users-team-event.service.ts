@@ -80,7 +80,8 @@ export class UsersTeamEventService {
     
           return {
             ok: true,
-            UTE
+            UTE,
+            nameTeam: teamData.name
           };
     
     
