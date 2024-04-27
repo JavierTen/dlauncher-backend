@@ -96,31 +96,33 @@ export class EventsService {
     }
   }
 
-  findToHome() {
+  async findToHome() {
     try {
-      const currentDate = new Date().toISOString();
-  
-      return this.eventRepository
-        .createQueryBuilder('event')
-        .select([
-          'event.id',
-          'event.name',
-          'event.startAt',
-          'event.endsAt',
-          'event.slug AS slug',
-          `CONCAT(SUBSTRING(event.shortDescription, 1, 400), '...') AS shortDescription`,
-          `CASE
-            WHEN event.startAt > :currentDate THEN 'Próximamente'
-            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
-            WHEN event.endsAt < :currentDate THEN 'Finalizado'
-            ELSE NULL
-          END AS status`,
-        ])
-        .where('event.post = :post', { post: 1 })
-        .orderBy('event.id', 'DESC')
-        .setParameter('currentDate', currentDate)
-        .take(3)
-        .getRawMany();
+      const currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 5);
+
+      const eventsToHome = await this.eventRepository.find({
+        where: {post: true},
+        order: { startAt: 'DESC' },
+        take: 3
+      })
+
+      const events = eventsToHome.map( event => {
+        const { id, name, slug, startAt, endsAt } = event;
+        let status;
+        if (startAt > currentDate) {
+          status = 'Próximamente';
+        } else if (currentDate >= startAt  &&  currentDate <= endsAt  ) {
+          status = 'En curso';
+        } else if (currentDate >= endsAt) {
+          status = 'Finalizado';
+        }
+
+        return { id, name, slug, status }
+      })
+
+      return events
+      
     } catch (error) {
       throw error;
     }
