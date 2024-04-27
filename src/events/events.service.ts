@@ -76,7 +76,6 @@ export class EventsService {
       currentDate.setHours(currentDate.getHours() - 5);
 
       const eventsToHome = await this.eventRepository.find({
-        where: {post: true},
         order: { startAt: 'DESC' }
       })
 
