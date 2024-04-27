@@ -11,19 +11,13 @@ export class CertificatesController {
 
 
 
-  @Get('/participation-certificate/:idEvent/:idUser')
-  participationCertificate(@Res() res: Response,
+  @Get(':idEvent/:idUser')
+  participationCertificate(
   @Param('idEvent') idEvent: number,
   @Param('idUser') idUser: number) {
-    return this.certificatesService.participationCertificate(res, idEvent, idUser);
+    return this.certificatesService.certificate(idEvent, idUser);
   }
 
-  @Get('/winner-certificate/:idEvent/:idUser')
-  winnerCertificate(@Res() res: Response,
-  @Param('idEvent') idEvent: number,
-  @Param('idUser') idUser: number) {
-    return this.certificatesService.winnerCertificate(res, idEvent, idUser);
-  }
 
 
 }

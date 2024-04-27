@@ -16,7 +16,7 @@ export class CertificatesService {
     @InjectRepository(Events) private eventRepository: Repository<Events>,
   ) { }
 
-  async participationCertificate(res: Response, idEvent: number, idUser: number) {
+  async certificate(idEvent: number, idUser: number) {
     //const doc = new PDFDocument();
 
     try {
@@ -62,56 +62,13 @@ export class CertificatesService {
 
     } catch (error) {
         console.error('Error generando el certificado:', error);
-        res.status(500).send('Error generando el certificado');
+       
     }
 
 
   }
 
-  async winnerCertificate(res: Response, idEvent: number, idUser: number) {
-    //const doc = new PDFDocument();
-
-    try {
-      const user = await this.userRepository.findOne({
-        where: {
-          id: idUser
-        }
-      })
-
-      const event = await this.eventRepository.findOne({
-        where: {
-          id: idEvent
-        }
-      })
-
-      const name = user.name;
-      const lastname = user.lastname;
-
-      const namEvent = event.name;
-      const date = event.startAt
-      const nameOrganizer = event.organizerName;
-
-      const currentDate = date;
-
-      // Obtener el nombre del mes
-      const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-      const monthName = monthNames[currentDate.getMonth()];
-
-      // Obtener el día y el año
-      const day = currentDate.getDate();
-      const year = currentDate.getFullYear();
-
-      // Construir la cadena de fecha en el formato deseado
-      const formattedDate = `${monthName} ${day} de ${year}`;
-
-
-    } catch (error) {
-
-    }
-
-
-  }
+  
 
 
 
