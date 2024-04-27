@@ -526,10 +526,7 @@ export class UsersService {
         const { id, name, slug, startAt, endsAt } = ute.team.event;
         const team = ute.team['name']
         let status;
-        console.log('-------------------------------------')
-        console.log('Hora actual: ',currentDate)
-        console.log('Hora inicio evento: ',startAt)
-        console.log('Hora fin evento: ',endsAt)
+    
         if (startAt > currentDate) {
           status = 'Próximamente';
         } else if (currentDate >= startAt  &&  currentDate <= endsAt  ) {

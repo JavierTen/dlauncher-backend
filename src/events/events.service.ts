@@ -50,6 +50,7 @@ export class EventsService {
 
       const events = eventsToHome.map( event => {
         const { id, name, slug, startAt, endsAt, shortDescription } = event;
+        const truncatedShortDescription = shortDescription.length > 400 ? shortDescription.substring(0, 400) + '...' : shortDescription;
         let status;
         if (startAt > currentDate) {
           status = 'Próximamente';
@@ -59,7 +60,7 @@ export class EventsService {
           status = 'Finalizado';
         }
 
-        return { id, name, slug, status, startAt, shortDescription }
+        return { id, name, slug, status, startAt, shortDescription: truncatedShortDescription }
       })
 
       return events
