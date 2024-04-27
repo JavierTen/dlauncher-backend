@@ -232,8 +232,8 @@ export class TeamsService {
       const currentDate = new Date();
       currentDate.setHours(currentDate.getHours() - 5);
 
-      const closeAt = event.closeAt;
-      closeAt.setHours(closeAt.getHours() + 5);
+      const closeAt = new Date(event.closeAt);
+      closeAt.setHours(closeAt.getHours() - 5);
       const isBeforeCloseAt = currentDate < closeAt;
 
 
