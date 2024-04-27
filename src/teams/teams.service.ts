@@ -230,7 +230,11 @@ export class TeamsService {
       })
       const { event } = findTeam;
       const currentDate = new Date();
-      const isBeforeCloseAt = currentDate < new Date(event.closeAt);
+      currentDate.setHours(currentDate.getHours() - 5);
+
+      const closeAt = event.closeAt;
+      closeAt.setHours(closeAt.getHours() - 5);
+      const isBeforeCloseAt = currentDate < event.closeAt;
 
 
       if (!findTeam) {
@@ -268,7 +272,9 @@ export class TeamsService {
       return {
         ok: true,
         enabled: true,
-        team: findTeam.id
+        team: findTeam.id,
+        datenow: currentDate,
+        dateclose: closeAt
       };
 
 
@@ -459,8 +465,19 @@ export class TeamsService {
 
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} team`;
+  async remove(id: number) {
+    const team = await this.teamRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!team) {
+      return false; // El usuario no existe
+    }
+
+    await this.teamRepository.remove(team);
+    return true; // Usuario eliminado con éxito
   }
 
   async total(): Promise<number> {

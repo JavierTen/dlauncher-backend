@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Put, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Put, Param, Delete, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
@@ -86,7 +86,13 @@ export class TeamsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.teamsService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const deleted = await this.teamsService.remove(id);
+
+    if (!deleted) {
+      throw new NotFoundException(`Equipo con ID ${id} no encontrado.`);
+    }
+
+    return { message: `Equipo con ID ${id} eliminado correctamente.` };
   }
 }
