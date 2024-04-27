@@ -248,6 +248,8 @@ export class TeamsService {
         return {
           ok: false,
           error: 'CLOSED_REGISTRARTIONS',
+          datenow: currentDate,
+          dateclose: closeAt
         };
       }
 
