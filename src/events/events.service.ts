@@ -118,7 +118,7 @@ export class EventsService {
           status = 'Finalizado';
         }
 
-        return { id, name, slug, status }
+        return { id, name, slug, status, startAt }
       })
 
       return events
