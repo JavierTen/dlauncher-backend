@@ -69,30 +69,32 @@ export class EventsService {
     }
   }
 
-  findAllAdmin() {
+  async findAllAdmin() {
     try {
-      const currentDate = new Date().toISOString();
-  
-      return this.eventRepository
-        .createQueryBuilder('event')
-        .select([
-          'event.id',
-          'event.name',
-          'event.startAt',
-          'event.endsAt',
-          'event.post AS post',
-          'event.slug AS slug',
-          `CONCAT(SUBSTRING(event.shortDescription, 1, 400), '...') AS shortDescription`,
-          `CASE
-            WHEN event.startAt > :currentDate THEN 'Próximamente'
-            WHEN event.endsAt >= :currentDate AND event.startAt <= :currentDate THEN 'En curso'
-            WHEN event.endsAt < :currentDate THEN 'Finalizado'
-            ELSE NULL
-          END AS status`,
-        ])
-        .orderBy('event.id', 'DESC')
-        .setParameter('currentDate', currentDate)
-        .getRawMany();
+      const currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() - 5);
+
+      const eventsToHome = await this.eventRepository.find({
+        where: {post: true},
+        order: { startAt: 'DESC' }
+      })
+
+      const events = eventsToHome.map( event => {
+        const { id, name, slug, startAt, endsAt, shortDescription, post } = event;
+        let status;
+        if (startAt > currentDate) {
+          status = 'Próximamente';
+        } else if (currentDate >= startAt  &&  currentDate <= endsAt  ) {
+          status = 'En curso';
+        } else if (currentDate >= endsAt) {
+          status = 'Finalizado';
+        }
+
+        return { id, name, slug, status, startAt, shortDescription, post }
+      })
+
+      return events
+      
     } catch (error) {
       throw error;
     }
