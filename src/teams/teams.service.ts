@@ -432,12 +432,7 @@ export class TeamsService {
         } 
       }
 
-      if(result){
-        return {
-          ok: false,
-          
-        };
-      }
+      
 
       return {
         ok: true,
