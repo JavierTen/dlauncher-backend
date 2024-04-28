@@ -336,6 +336,13 @@ export class TeamsService {
         relations: ['team.event']
       })
 
+      if(!findTeam){
+        return {
+          ok: false,
+          
+        };
+      }
+
       const datateam = findTeam.filter(data => data.team.event.id === eventId);
 
       const data = datateam.map(data => ({
@@ -478,7 +485,9 @@ export class TeamsService {
     }
 
     await this.teamRepository.remove(team);
-    return true; // Usuario eliminado con éxito
+    return {
+      ok: true,
+    } // Usuario eliminado con éxito
   }
 
   async total(): Promise<number> {
