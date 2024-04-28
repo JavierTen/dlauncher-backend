@@ -110,15 +110,16 @@ export class EventEvaluatorService {
       const eventsE = events.map(event => {
         const { id, name, slug ,startAt, endsAt } = event;
         const currentDate = new Date();
-    
+        currentDate.setHours(currentDate.getHours() - 5);
+
         let status;
     
-        if (new Date(startAt) > currentDate) {
-            status = 'Próximamente';
-        } else if (new Date(startAt) <= currentDate && new Date(endsAt) >= currentDate) {
-            status = 'En curso';
-        } else {
-            status = 'Finalizado';
+        if (startAt > currentDate) {
+          status = 'Próximamente';
+        } else if (currentDate >= startAt  &&  currentDate <= endsAt  ) {
+          status = 'En curso';
+        } else if (currentDate >= endsAt) {
+          status = 'Finalizado';
         }
     
         return { id, name, slug, status, startAt  };
