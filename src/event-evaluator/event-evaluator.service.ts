@@ -86,7 +86,8 @@ export class EventEvaluatorService {
           user: {
             id: id
           } 
-        },
+        },order: {createdAt : 'DESC' }
+        
       })
   
       // Utiliza el método map para extraer solo los objetos 'event'.
