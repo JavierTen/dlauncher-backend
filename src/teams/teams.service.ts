@@ -329,6 +329,20 @@ export class TeamsService {
 
     try {
 
+      if(!eventId){
+        return {
+          ok: false,
+          
+        };
+      }
+
+      if(!id){
+        return {
+          ok: false,
+          
+        };
+      }
+
       const findTeam = await this.userRepository.find({
         where: {
           user: { id }
