@@ -184,13 +184,11 @@ export class TeamsService {
       function validarFechas(closeEvent: Date, closeEvaluation: Date): boolean {
         // Convertir las cadenas de fecha a objetos de fecha
         const fechaActual = new Date();
+        fechaActual.setHours(fechaActual.getHours() - 5);
         const fechaCierreEvento = new Date(closeEvent);
         const fechaCierreEvaluacion = new Date(closeEvaluation);
 
 
-        console.log(fechaActual)
-        console.log(fechaCierreEvento)
-        console.log(fechaCierreEvaluacion)
         // Comparar si la fecha actual está entre closeEvent y closeEvaluation
         return fechaActual > fechaCierreEvento && fechaActual < fechaCierreEvaluacion;
       }

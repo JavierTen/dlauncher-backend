@@ -61,7 +61,7 @@ export class EvaluatorQualificationService {
       if (updateTeamDto.score) { 
         team.score = totalScore;
       }
-
+      
       this.teamRepository.save(team);
       return {
         totalScore
