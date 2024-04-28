@@ -352,8 +352,7 @@ export class TeamsService {
 
       if(!findTeam){
         return {
-          ok: false,
-          
+          ok: false
         };
       }
 
@@ -377,22 +376,18 @@ export class TeamsService {
         youtube: data.team.youtube,
         participated: (data.team.github !== null && data.team.youtube !== null) && data.team.score !== 0
       }));
-      console.log('------------------')
+      
       const idTeam = data[0].idTeam;
       const endDate = data[0].endDate;
       const closeEvaluation = data[0].closeEvaluation;
-      console.log(data[0].idEvent)
-      console.log(idTeam)
+     
       function validarFechas(endDate: Date, closeEvaluation: Date): boolean {
         // Convertir las cadenas de fecha a objetos de fecha
         const fechaActual = new Date();
         const fechaCierreEvento = new Date(endDate);
         const fechaCierreEvaluacion = new Date(closeEvaluation);
 
-        console.log(fechaActual)
-        console.log(fechaCierreEvento)
-        console.log(fechaCierreEvaluacion)
-
+    
 
         // Comparar si la fecha actual está entre closeEvent y closeEvaluation
         return fechaActual > fechaCierreEvento && fechaActual < fechaCierreEvaluacion;
@@ -435,6 +430,13 @@ export class TeamsService {
            win = false
           }
         } 
+      }
+
+      if(result){
+        return {
+          ok: false,
+          
+        };
       }
 
       return {
