@@ -193,7 +193,20 @@ export class TeamsService {
         return fechaActual > fechaCierreEvento && fechaActual < fechaCierreEvaluacion;
       }
 
+      function validarFiinalEvento(closeEvent: Date): boolean {
+        // Convertir las cadenas de fecha a objetos de fecha
+        const fechaActual = new Date();
+        fechaActual.setHours(fechaActual.getHours() - 5);
+        const fechaCierreEvento = new Date(closeEvent);
+        
+
+
+        // Comparar si la fecha actual está entre closeEvent y closeEvaluation
+        return fechaActual > fechaCierreEvento 
+      }
+
       const result = validarFechas(closeEvent, closeEvaluation);
+      const resultFinalEvento = validarFiinalEvento(closeEvent);
 
       console.log(result)
 
@@ -207,7 +220,8 @@ export class TeamsService {
         slugEvent: findTeam.event.slug,
         members,
         maxMembers,
-        assess: result
+        assess: result,
+        finishEvent: resultFinalEvento
       };
 
 
